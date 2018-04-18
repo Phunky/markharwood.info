@@ -7,6 +7,9 @@
         <router-link to="projects">Projects</router-link>
         <router-link to="streams">Streams</router-link>
       </nav>
+      <div class="colophon">
+        Pushing the boundaries of the t'internet.
+      </div>
     </div>
     <div class="router">
       <pre>{{ $route }}</pre>
@@ -21,22 +24,29 @@
   width 100vw
   height 100vh
 .sidebar
+  display flex
   flex 0 0 auto
+  flex-direction column
   width 10em
   padding 2em
   background-color #f8fafc
-  nav > a
-    display block
-    text-decoration none 
-    font-size 1.3em
-    margin-bottom 1em
-    color #6574CD
-    transition all .2s ease-in-out
-    &:hover
-      color #5661B3
-    &.router-link-active
-      color #794ACF
-      font-size 1.8em
+  nav 
+    flex 1 1 auto
+    > a
+      display block
+      text-decoration none 
+      font-size 1.3em
+      margin-bottom 1em
+      color #6574CD
+      transition all .2s ease-in-out
+      &:hover
+        color #5661B3
+      &.router-link-active
+        color #794ACF
+        font-size 1.8em
+  .colophon
+    flex 0 0 auto
+    font-size .8rem
 .router
   flex 1 1 auto
 </style>
