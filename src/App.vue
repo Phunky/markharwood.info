@@ -9,6 +9,7 @@
       </nav>
       <img src="./assets/mug.jpg" class="avatar" />
       <div class="colophon">
+        <h2>Mark Harwood</h2>
         Pushing the boundaries of how we use the <a href="https://www.urbandictionary.com/define.php?term=Tinternet" target="_blank">t'internet</a>.
       </div>
     </div>
@@ -51,8 +52,7 @@
     font-size .8rem
     text-align center
   .avatar 
-    width 130px
-    margin-bottom 24px
+    width 100px
     border-radius 2em
     border 5px solid #fff
     align-self center
