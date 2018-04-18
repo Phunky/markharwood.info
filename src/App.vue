@@ -7,8 +7,8 @@
         <router-link to="projects">Projects</router-link>
         <router-link to="streams">Streams</router-link>
       </nav>
+      <img src="./assets/mug.jpg" class="avatar" />
       <div class="colophon">
-        <img src="./assets/mug.jpg" />
         Pushing the boundaries of how we use the <a href="https://www.urbandictionary.com/define.php?term=Tinternet" target="_blank">t'internet</a>.
       </div>
     </div>
@@ -50,10 +50,12 @@
     flex 0 0 auto
     font-size .8rem
     text-align center
-    img 
-      width 100px
-      border-radius 2em
-      border 5px solid #fff
+  .avatar 
+    width 125px
+    margin 16px 0
+    border-radius 2em
+    border 5px solid #fff
+    align-self center
 .router
   flex 1 1 auto
 </style>
