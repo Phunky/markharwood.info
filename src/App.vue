@@ -8,7 +8,8 @@
         <router-link to="streams">Streams</router-link>
       </nav>
       <div class="colophon">
-        Pushing the boundaries of the t'internet.
+        <img src="./assets/mug.jpg" />
+        Pushing the boundaries of how we use the <a href="https://www.urbandictionary.com/define.php?term=Tinternet" target="_blank">t'internet</a>.
       </div>
     </div>
     <div class="router">
@@ -30,6 +31,7 @@
   width 10em
   padding 2em
   background-color #f8fafc
+  color #6574CD
   nav 
     flex 1 1 auto
     > a
@@ -37,8 +39,8 @@
       text-decoration none 
       font-size 1.3em
       margin-bottom 1em
-      color #6574CD
       transition all .2s ease-in-out
+      color currentColor
       &:hover
         color #5661B3
       &.router-link-active
@@ -47,6 +49,11 @@
   .colophon
     flex 0 0 auto
     font-size .8rem
+    text-align center
+    img 
+      width 100px
+      border-radius 2em
+      border 5px solid #fff
 .router
   flex 1 1 auto
 </style>
