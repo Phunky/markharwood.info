@@ -51,8 +51,8 @@
     font-size .8rem
     text-align center
   .avatar 
-    width 125px
-    margin 16px 0
+    width 130px
+    margin-bottom 24px
     border-radius 2em
     border 5px solid #fff
     align-self center
