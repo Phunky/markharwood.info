@@ -7,13 +7,28 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: () => import('./views/Home.vue')
+      redirect: '/about'
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('./views/About.vue')
+      component: () => import('./views/About.vue'),
+      alias: '/'
+    },
+    {
+      path: '/experience',
+      name: 'experience',
+      component: () => import('./views/Experience.vue')
+    },
+    {
+      path: '/projects',
+      name: 'projects',
+      component: () => import('./views/Projects.vue')
+    },
+    {
+      path: '/streams',
+      name: 'streams',
+      component: () => import('./views/Streams.vue')
     }
   ]
 })

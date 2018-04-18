@@ -1,18 +1,52 @@
 <template>
-  <div class="m-6 p-8 bg-grey-lighter overflow-y-scroll w-screen font-serif">
-    <img src="./assets/mug.jpg">
-    <router-view/>
+  <div class="container">
+    <div class="sidebar">
+      <nav>
+        <router-link to="about">About</router-link>
+        <router-link to="experience">Experience</router-link>
+        <router-link to="projects">Projects</router-link>
+        <router-link to="streams">Streams</router-link>
+      </nav>
+    </div>
+    <div class="router">
+      <pre>{{ $route }}</pre>
+      <!-- <router-view/> -->
+    </div>
   </div>
 </template>
 
-<style lang="stylus">
-@tailwind preflight;
-@tailwind components;
-@tailwind utilities;
-
-body
+<style lang="stylus" scoped>
+.container
   display flex
-  overflow hidden
   width 100vw
   height 100vh
+.sidebar
+  flex 0 0 auto
+  width 10em
+  padding 2em
+  background-color #f8fafc
+  nav > a
+    display block
+    text-decoration none 
+    font-size 1.3em
+    margin-bottom 1em
+    color #6574CD
+    transition all .2s ease-in-out
+    &:hover
+      color #5661B3
+    &.router-link-active
+      color #794ACF
+      font-size 1.8em
+.router
+  flex 1 1 auto
 </style>
+
+<style lang="stylus">
+@import url('https://fonts.googleapis.com/css?family=Varela+Round')
+
+html, body
+  margin 0
+  padding 0
+  font-family 'Varela Round', sans-serif
+</style>
+
