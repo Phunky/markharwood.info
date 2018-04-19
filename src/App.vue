@@ -7,6 +7,7 @@
         <router-link to="projects">Projects</router-link>
         <router-link to="streams">Streams</router-link>
       </nav>
+      <img src="./assets/mug.jpg" class="avatar" />
       <div class="colophon">
         <h2>Mark Harwood</h2>
         Pushing the boundaries of how we use the <a href="https://www.urbandictionary.com/define.php?term=Tinternet" target="_blank">t'internet</a>.
