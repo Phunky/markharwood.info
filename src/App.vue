@@ -7,15 +7,13 @@
         <router-link to="projects">Projects</router-link>
         <router-link to="streams">Streams</router-link>
       </nav>
-      <img src="./assets/mug.jpg" class="avatar" />
       <div class="colophon">
         <h2>Mark Harwood</h2>
         Pushing the boundaries of how we use the <a href="https://www.urbandictionary.com/define.php?term=Tinternet" target="_blank">t'internet</a>.
       </div>
     </div>
     <div class="router">
-      <pre>{{ $route }}</pre>
-      <!-- <router-view/> -->
+      <router-view/>
     </div>
   </div>
 </template>
@@ -30,7 +28,7 @@
   flex 0 0 auto
   flex-direction column
   width 10em
-  padding 2em
+  padding 2vw
   background-color #f8fafc
   color #6574CD
   nav 
@@ -57,6 +55,7 @@
     border 5px solid #fff
     align-self center
 .router
+  display flex
   flex 1 1 auto
 </style>
 
@@ -67,5 +66,10 @@ html, body
   margin 0
   padding 0
   font-family 'Varela Round', sans-serif
+  color #8795A1
+
+.router
+  h1, h2, h3, h4, h5, h6, p
+    margin-top 0
 </style>
 
