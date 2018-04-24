@@ -1,20 +1,15 @@
 <template>
   <div class="container">
-    <div class="sidebar">
-      <nav>
-        <router-link to="about">About</router-link>
-        <router-link to="experience">Experience</router-link>
-        <router-link to="projects">Projects</router-link>
-        <router-link to="streams">Streams</router-link>
-      </nav>
-      <img src="./assets/mug.jpg" class="avatar" />
-      <div class="colophon">
-        <h2>Mark Harwood</h2>
-        Pushing the boundaries of how we use the <a href="https://www.urbandictionary.com/define.php?term=Tinternet" target="_blank">t'internet</a>.
-      </div>
-    </div>
     <div class="router">
       <router-view/>
+    </div>
+    <div class="footer">
+      <div class="external">
+        <twinkle :speed="500" href="https://github.com/phunky" target="_blank"><i class="fab fa-github"></i></twinkle>
+        <twinkle :speed="500" href="https://twitter.com/irphunky" target="_blank"><i class="fab fa-twitter"></i></twinkle>
+        <twinkle :speed="500" href="https://www.linkedin.com/in/markphunkyharwood" target="_blank"><i class="fab fa-linkedin"></i></twinkle>
+        <twinkle :speed="500" href="twitch.tv/irphunky" target="_blank"><i class="fab fa-twitch"></i></twinkle>
+      </div>
     </div>
   </div>
 </template>
@@ -22,39 +17,13 @@
 <style lang="stylus" scoped>
 .container
   display flex
-  width 100vw
-  height 100vh
-.sidebar
-  display flex
-  flex 0 0 auto
   flex-direction column
-  width 10em
-  padding 2vw
-  background-color #f8fafc
-  color #6574CD
-  nav 
-    flex 1 1 auto
-    > a
-      display block
-      text-decoration none 
-      font-size 1.3em
-      margin-bottom 1em
-      transition all .2s ease-in-out
-      color currentColor
-      &:hover
-        color #5661B3
-      &.router-link-active
-        color #794ACF
-        font-size 1.8em
-  .colophon
-    flex 0 0 auto
-    font-size .8rem
-    text-align center
-  .avatar 
-    width 100px
-    border-radius 2em
-    border 5px solid #fff
-    align-self center
+  font-size 2vw
+  padding 5vw 10vw
+.external
+  display flex
+  flex-direction row
+  justify-content space-between
 .router
   display flex
   flex 1 1 auto
@@ -64,6 +33,9 @@
 @import url('https://fonts.googleapis.com/css?family=Varela+Round')
 
 html, body
+  display flex
+  width 100vw
+  height 100vh
   margin 0
   padding 0
   font-family 'Varela Round', sans-serif
