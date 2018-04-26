@@ -7,10 +7,6 @@ export default new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
-      component: () => import('./views/About.vue'),
-    },
-    {
       path: '/about',
       name: 'about',
       component: () => import('./views/About.vue')
@@ -34,6 +30,10 @@ export default new Router({
       path: '/magic',
       name: 'magic',
       component: () => import('./views/Magic.vue')
+    },
+    {
+      path: '*',
+      component: () => import('./views/App.vue'
     }
   ]
 })

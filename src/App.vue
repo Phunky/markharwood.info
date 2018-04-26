@@ -2,6 +2,7 @@
   <div class="container">
     <div class="router">
       <router-view/>
+      <router-link to="magic">magic</router-link>
     </div>
     <div class="footer">
       <div class="external">
