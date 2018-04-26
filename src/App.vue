@@ -2,7 +2,6 @@
   <div class="container">
     <div class="router">
       <router-view/>
-      <router-link to="magic">magic</router-link>
     </div>
     <div class="external">
       <twinkle tag="a" :speed="1000" href="https://github.com/phunky" target="_blank"><i class="fab fa-github"></i></twinkle>
