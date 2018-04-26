@@ -30,6 +30,11 @@ export default new Router({
       path: '/streams',
       name: 'streams',
       component: () => import('./views/Streams.vue')
+    },
+    {
+      path: '/magic',
+      name: 'magic',
+      component: () => import('./views/Magic.vue')
     }
   ]
 })
