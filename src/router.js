@@ -33,7 +33,7 @@ export default new Router({
     },
     {
       path: '*',
-      component: () => import('./views/App.vue'
+      component: () => import('./views/About.vue')
     }
   ]
 })
