@@ -4,13 +4,11 @@
       <router-view/>
       <router-link to="magic">magic</router-link>
     </div>
-    <div class="footer">
-      <div class="external">
-        <twinkle tag="a" :speed="1000" href="https://github.com/phunky" target="_blank"><i class="fab fa-github"></i></twinkle>
-        <twinkle tag="a" :speed="1000" href="https://twitter.com/irphunky" target="_blank"><i class="fab fa-twitter"></i></twinkle>
-        <twinkle tag="a" :speed="1000" href="https://www.linkedin.com/in/markphunkyharwood" target="_blank"><i class="fab fa-linkedin"></i></twinkle>
-        <twinkle tag="a" :speed="1000" href="twitch.tv/irphunky" target="_blank"><i class="fab fa-twitch"></i></twinkle>
-      </div>
+    <div class="external">
+      <twinkle tag="a" :speed="1000" href="https://github.com/phunky" target="_blank"><i class="fab fa-github"></i></twinkle>
+      <twinkle tag="a" :speed="1000" href="https://twitter.com/irphunky" target="_blank"><i class="fab fa-twitter"></i></twinkle>
+      <twinkle tag="a" :speed="1000" href="https://www.linkedin.com/in/markphunkyharwood" target="_blank"><i class="fab fa-linkedin"></i></twinkle>
+      <twinkle tag="a" :speed="1000" href="twitch.tv/irphunky" target="_blank"><i class="fab fa-twitch"></i></twinkle>
     </div>
   </div>
 </template>
@@ -18,13 +16,12 @@
 <style lang="stylus" scoped>
 .container
   display flex
-  flex-direction column
   font-size 2vw
   padding 5vw 10vw
 .external
   display flex
-  flex-direction row
-  justify-content space-between
+  flex-direction column
+  padding 0 2vw
 .router
   display flex
   flex 1 1 auto

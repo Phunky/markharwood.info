@@ -6,7 +6,7 @@
     <h3>I'm Mark, a well versed product director and developer with over fifteen years experience of building web applications, automating business processes and growing start-ups.</h3>
     <h4>Currently working with <twinkle tag="a" href="https://www.fleetondemand.com" target="_blank">Fleetondemand</twinkle> as the Product Director of <twinkle tag="a" href="https://www.mobilleo.com" target="_blank">Mobilleo</twinkle> which is the first mobility-as-a-service business travel platform.</h4>
     <h5>Previously Engineering Manager at <twinkle tag="a" href="https://www.trendmicro.com" target="_blank">Trend Micro</twinkle>, User Interface Team Lead at <twinkle tag="a" href="https://www.crunchbase.com/organization/humyo" target="_blank">Humyo.com</twinkle> and some other senior and consultant positions more of which you can find on <twinkle tag="a" href="https://www.linkedin.com/in/markphunkyharwood/" target="_blank">LinkedIn</twinkle>.</h5>
-    <hr />
+    <twinkle tag="hr" />
     <h6>Married since 2011 and Father of two <i><b>super energetic</b></i> children, who love nothing more than to run rings around me daily. Pretty much everyone in our household is somewhere on the <twinkle tag="a" href="https://en.wikipedia.org/wiki/Autism_spectrum" target="_blank">ASD spectrum</twinkle> and this is something we as a family embrace completely.</h6>
     <h6>Other random things to note;</h6>
     <ul>
