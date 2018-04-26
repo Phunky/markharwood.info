@@ -8,13 +8,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/about'
+      component: () => import('./views/About.vue'),
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('./views/About.vue'),
-      alias: '/'
+      component: () => import('./views/About.vue')
     },
     {
       path: '/experience',
