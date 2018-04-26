@@ -11,9 +11,6 @@ phases:
       - npm run build
   post_build:
     commands:
-      - aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths /*
+      - aws s3 sync dist/ "s3://${BUCKET_NAME}" --acl=public-read --delete
+      - aws cloudfront create-invalidation --distribution-id "${DISTRIBUTION_ID}" --paths /\*
       - echo Build completed on `date`
-artifacts:
-  files:
-    - '**/*'
-  base-directory: 'dist'
