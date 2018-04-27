@@ -32,11 +32,12 @@ export default {
 
 
 <style lang="stylus" scoped>
-  p, li
-    font-size 1.2rem
+  p
+    font-size 2.5em
   li
+    font-size .7em
     margin-bottom 1em
-  img 
+  img
     border-radius 1em
     border .5em solid #f8fafc
   p + p

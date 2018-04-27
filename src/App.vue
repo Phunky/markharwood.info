@@ -7,7 +7,7 @@
       <twinkle tag="a" :speed="1000" href="https://github.com/phunky" target="_blank"><i class="fab fa-github"></i></twinkle>
       <twinkle tag="a" :speed="1000" href="https://twitter.com/irphunky" target="_blank"><i class="fab fa-twitter"></i></twinkle>
       <twinkle tag="a" :speed="1000" href="https://www.linkedin.com/in/markphunkyharwood" target="_blank"><i class="fab fa-linkedin"></i></twinkle>
-      <twinkle tag="a" :speed="1000" href="twitch.tv/irphunky" target="_blank"><i class="fab fa-twitch"></i></twinkle>
+      <twinkle tag="a" :speed="1000" href="https://twitch.tv/irphunky" target="_blank"><i class="fab fa-twitch"></i></twinkle>
     </div>
   </div>
 </template>
