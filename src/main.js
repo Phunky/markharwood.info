@@ -1,16 +1,16 @@
-import Vue from 'vue'
-import App from './App.vue'
-import Twinkle from './components/twinkle.vue'
-import router from './router'
-import store from './store'
-import './registerServiceWorker'
+import Vue from "vue";
+import App from "./App.vue";
+import router from "./router";
+import store from "./store";
+import "./registerServiceWorker";
 
-Vue.config.productionTip = false
+import Twinkle from "./components/Twinkle.vue";
+Vue.component("twinkle", Twinkle);
 
-Vue.component('twinkle', Twinkle);
+Vue.config.productionTip = false;
 
 new Vue({
   router,
   store,
   render: h => h(App)
-}).$mount('#app')
+}).$mount("#app");
