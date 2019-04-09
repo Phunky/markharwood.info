@@ -54,33 +54,47 @@
     </p>
     <h3>Other random things to note;</h3>
     <p>
-      I represented the UK at the 2005 World Cyber Games playing Counter-Strike
-      (<twinkle
+      I represented the UK at the
+      <twinkle
         tag="a"
         href="http://news.bbc.co.uk/1/hi/technology/4429264.stm"
         target="_blank"
-        >BBC Article</twinkle
-      >)
+        >2005 World Cyber Games</twinkle
+      >
+      playing Counter-Strike.
     </p>
     <p>
-      I've fought at two
+      I have fought and lost twice at
       <twinkle
         tag="a"
         href="https://gallery.ultrapix.co.uk/gallery/bradford20191uwcb/album/6716287/photo/1207237199"
         target="_blank"
         >Ultra White Collar Boxing</twinkle
       >
-      events, both of which I lost - but massively enjoyed them both.
+      events, but massively enjoyed them both.
     </p>
     <p>
-      I suffer with Anxiety and Depression, but have thankfully learnt to be
-      mindful of them both and now manage them in a much healthier way.
+      I had a black dog, his name was
+      <twinkle
+        tag="a"
+        href="https://www.youtube.com/watch?v=XiCrniLQGYc"
+        target="_blank"
+        >depression</twinkle
+      >
+      and anxiety.
     </p>
     <p>
-      Have dislocated cartilage in my chest, which used to allow me to mimic the
-      chest breaking scene from aliens.
+      I have dislocated cartilage in my chest, which used to allow me to mimic
+      the
+      <twinkle
+        tag="a"
+        href="https://www.youtube.com/watch?v=nPQ7om598OM"
+        target="_blank"
+        >chest breaking scene</twinkle
+      >
+      from aliens.
     </p>
-    <p>Would drop everything to move my family to NYC.</p>
+    <p>I would drop everything to move my family to NYC.</p>
   </div>
 </template>
 
