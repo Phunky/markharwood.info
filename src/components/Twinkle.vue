@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" :style="color" class="twinkle"><slot /></component>
+  <component :is="tag" :style="{ color }" class="twinkle"><slot /></component>
 </template>
 
 <script>
