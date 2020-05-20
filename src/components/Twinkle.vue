@@ -12,7 +12,9 @@ export default {
     },
     speed: {
       type: Number,
-      default: 1500
+      default() {
+        return Math.random() * (5000 - 1500) + 1500;
+      }
     }
   },
   data() {
@@ -47,5 +49,6 @@ export default {
 
 <style lang="stylus" scoped>
 .twinkle
-  transition all .5s ease-in-out
+  transition color .8s ease-in-out
+  will-change color
 </style>
