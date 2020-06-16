@@ -63,7 +63,7 @@ export default {
       },
       preset: {
         autoprefixer: {
-          grid: true
+          grid: false
         }
       }
     }
