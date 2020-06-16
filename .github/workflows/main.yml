@@ -16,7 +16,7 @@ jobs:
         - name: Build
           run: yarn build
         - name: Deploy
-          uses: reggionick/s3-deploy@v1.1
+          uses: reggionick/s3-deploy@v1.1.1
           with:
             folder: dist
             bucket: ${{ secrets.S3_BUCKET }}
