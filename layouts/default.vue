@@ -2,7 +2,7 @@
   <div class="h-screen border-purple-900 border-t-4">
     <div class="container max-w-xl mx-auto">
       <img src="~/assets/img/trippy.jpg" class="w-24 h-24 my-8 shadow rounded-full">
-      <div class="leading-relaxed tracking-tight break-words text-indigo-900 subpixel-antialiased">
+      <div class="leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased">
         <h1 class="text-3xl font-bold mb-4">
           Hey I'm Mark.
         </h1>
