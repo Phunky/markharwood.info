@@ -43,7 +43,7 @@ export default {
   */
   modules: [
     '@nuxtjs/pwa',
-    '@nuxt/content',
+    '@nuxt/content'
   ],
   /*
   ** Build configuration
@@ -56,10 +56,6 @@ export default {
     },
     postcss: {
       plugins: {
-        // 'postcss-url': false,
-        // 'postcss-nested': {},
-        // 'postcss-responsive-type': {},
-        // 'postcss-hexrgba': {}
       },
       preset: {
         autoprefixer: {
@@ -68,7 +64,7 @@ export default {
       }
     }
   },
-/*
+  /*
 ** Dev configuration
 */
   server: {

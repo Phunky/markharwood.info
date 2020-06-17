@@ -1,7 +1,7 @@
 <template>
   <div class="leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased">
     <h1 class="text-xl sm:text-3xl font-bold mb-4 mt-2 sm:mt-0">
-      {{ welcome }} I'm Mark.
+      👋 {{ welcome }} I'm Mark.
     </h1>
     <div class="text-sm sm:text-xl">
       <p>
@@ -14,6 +14,21 @@
         I’m also available for short, freelance development projects if you wish to <a href="mailto:mark@phunky.co.uk?subject=Let's work together">hire me</a>
       </p>
     </div>
+    <h2 class="text-ls sm:text-xl font-bold mt-6">
+      Still here? Right, well then...
+    </h2>
+    <ul class="text-sm sm:text-xl">
+      <li>
+        <router-link tag="a" :to="{path: 'now'}" class="underline text-indigo-900 hover:text-indigo-600">
+          Have a nosey at what i'm doing now →
+        </router-link>
+      </li>
+      <li>
+        <router-link tag="a" :to="{path: 'about'}" class="underline text-indigo-900 hover:text-indigo-600">
+          Dig up some dirt about me →
+        </router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -42,11 +57,11 @@ p {
   @apply mb-4;
 }
 
-a {
-  @apply underline text-bold;
+p a {
+  @apply underline font-bold;
 }
 
-a:hover {
+p a:hover {
   @apply text-indigo-600;
 }
 </style>
