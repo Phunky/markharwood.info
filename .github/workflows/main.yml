@@ -23,4 +23,4 @@ jobs:
             WITH_DELETE: true
             WITH_CLOUD_FRONT_INVALIDATION: true
             AWS_CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-            AWS_CLOUDFRONT_INVALIDATION_PATH: ./index.html
+            AWS_CLOUDFRONT_INVALIDATION_PATH: /index.html
