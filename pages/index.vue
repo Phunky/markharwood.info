@@ -20,12 +20,17 @@
     <ul class="text-sm sm:text-xl">
       <li>
         <router-link tag="a" :to="{path: 'now'}" class="underline text-indigo-900 hover:text-indigo-600">
-          Have a nosey at what i'm doing now →
+          /now
+        </router-link>
+      </li>
+      <li>
+        <router-link tag="a" :to="{path: 'uses'}" class="underline text-indigo-900 hover:text-indigo-600">
+          /uses
         </router-link>
       </li>
       <li>
         <router-link tag="a" :to="{path: 'about'}" class="underline text-indigo-900 hover:text-indigo-600">
-          Dig up some dirt about me →
+          /about
         </router-link>
       </li>
     </ul>
