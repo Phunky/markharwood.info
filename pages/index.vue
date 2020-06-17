@@ -11,12 +11,7 @@
         Currently working with <a href="https://fleetondemand.com" target="_blank">Fleetondemand</a> as the Product Director of <a href="https://mobilleo.com" target="_blank">Mobilleo</a>, A revolutionary mobility as a service technology platform for business.
       </p>
       <p>
-        I’m also available for short, freelance development projects.
-      </p>
-      <p class="pt-4">
-        <a href="mailto:mark@phunky.co.uk" class="block sm:w-40 bg-indigo-900 hover:bg-indigo-600 text-center text-white font-bold py-2 px-4 rounded">
-          Hire me
-        </a>
+        I’m also available for short, freelance development projects if you wish to <a href="mailto:mark@phunky.co.uk?subject=Let's work together">hire me</a>
       </p>
     </div>
   </div>
@@ -47,11 +42,11 @@ p {
   @apply mb-4;
 }
 
-a[target] {
-  @apply underline;
+a {
+  @apply underline text-bold;
 }
 
-a[target]:hover {
+a:hover {
   @apply text-indigo-600;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen border-purple-900 border-t-4">
     <div class="relative container p-8 sm:p-0 sm:max-w-xl mx-auto">
-      <div class="absolute pt-4 top-0 right-0">
+      <div class="absolute pt-8 mr-8 top-0 right-0">
         <router-link tag="a" :to="{path: 'now'}" class="underline font-bold text-indigo-900 hover:text-indigo-600">
           Now
         </router-link>
