@@ -8,12 +8,3 @@
     </div>
   </div>
 </template>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900&display=swap');
-
-html {
-  font-family: 'M PLUS Rounded 1c', sans-serif;
-  @apply bg-gray-300;
-}
-</style>

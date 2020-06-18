@@ -1,6 +1,6 @@
 <template>
   <div class="leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased">
-    <h1 class="text-xl sm:text-3xl font-bold mb-4 mt-2 sm:mt-0">
+    <h1 class="mb-4 mt-2">
       👋 {{ welcome }} I'm Mark.
     </h1>
     <div class="text-sm sm:text-xl">
@@ -19,17 +19,17 @@
     </h2>
     <ul class="text-sm sm:text-xl">
       <li>
-        <router-link tag="a" :to="{path: 'now'}" class="underline text-indigo-900 hover:text-indigo-600">
+        <router-link tag="a" :to="{path: 'now'}">
           /now
         </router-link>
       </li>
       <li>
-        <router-link tag="a" :to="{path: 'uses'}" class="underline text-indigo-900 hover:text-indigo-600">
+        <router-link tag="a" :to="{path: 'uses'}">
           /uses
         </router-link>
       </li>
       <li>
-        <router-link tag="a" :to="{path: 'about'}" class="underline text-indigo-900 hover:text-indigo-600">
+        <router-link tag="a" :to="{path: 'about'}">
           /about
         </router-link>
       </li>
@@ -56,17 +56,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-p {
-  @apply mb-4;
-}
-
-p a {
-  @apply underline font-bold;
-}
-
-p a:hover {
-  @apply text-indigo-600;
-}
-</style>

@@ -1,15 +1,13 @@
 <template>
-  <div class="leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased">
-    <h1 class="text-xl sm:text-3xl font-bold mt-2 sm:mt-0">
+  <div>
+    <h1>
       About
     </h1>
-    <h2 class="text-sm mb-4 text-gray-600">
+    <h2 class="text-gray-600">
       TL;DR: Husband; Father; Gamer; Computer Geek; Striving to be the best version of myself.
     </h2>
-    <div class="text-md">
-      <div class="mb-8">
-        ...
-      </div>
+    <div class="text-md my-4">
+      ...
     </div>
   </div>
 </template>
