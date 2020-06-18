@@ -17,9 +17,6 @@
           <li>Moved CI/CD from AWS CodeBuild to Github Actions.</li>
         </ul>
       </div>
-      <p class="text-sm text-gray-6 00">
-        This is a <a href="https://nownownow.com/about" target="_blank" class="underline">now</a> and i'm going to try my best to keep updating this as we go along.
-      </p>
     </div>
   </div>
 </template>
