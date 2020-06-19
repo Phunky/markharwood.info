@@ -1,6 +1,7 @@
 
 export default {
   mode: 'spa',
+  target: 'static',
   /*
   ** Headers of the page
   */
@@ -42,7 +43,6 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
-    '@nuxtjs/pwa',
     '@nuxt/content'
   ],
   /*
