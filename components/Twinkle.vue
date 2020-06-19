@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" :style="{ color }" class="twinkle">
+  <component :is="tag" :class="color" class="twinkle">
     <slot />
   </component>
 </template>
@@ -31,19 +31,18 @@ export default {
     }, this.speed)
   },
   methods: {
+    random (arr) {
+      return arr[Math.floor(Math.random() * arr.length)]
+    },
     randomColor () {
-      const values = [
-        '#E3342F',
-        '#F6993F',
-        '#FFED4A',
-        '#38C172',
-        '#4DC0B5',
-        '#3490DC',
-        '#6574CD',
-        '#9561E2',
-        '#F66D9B'
+      const colours = [
+        'red', 'orange', 'yellow', 'green',
+        'teal', 'blue', 'indigo', 'purple', 'pink'
       ]
-      return values[Math.floor(Math.random() * values.length)]
+      const shades = [
+        300, 500, 700
+      ]
+      return `text-${this.random(colours)}-${this.random(shades)}`
     }
   }
 }

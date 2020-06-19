@@ -1,8 +1,8 @@
 <template>
   <div class="leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased">
-    <h1 class="mb-4 mt-2">
+    <Twinkle tag="h1" class="mb-4 mt-2">
       👋 {{ welcome }} I'm Mark.
-    </h1>
+    </Twinkle>
     <div class="text-sm sm:text-xl">
       <p>
         For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.

@@ -2,6 +2,7 @@
 export default {
   mode: 'spa',
   target: 'static',
+  components: true,
   /*
   ** Headers of the page
   */
