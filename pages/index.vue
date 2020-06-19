@@ -1,6 +1,6 @@
 <template>
   <div class="leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased">
-    <Twinkle tag="h1" :speed="500" class="mb-4 mt-2">
+    <Twinkle tag="h1" :speed="1000" class="mb-4 mt-2">
       👋 {{ welcome }} I'm Mark.
     </Twinkle>
     <div class="text-sm sm:text-xl">
