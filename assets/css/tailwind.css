@@ -4,43 +4,24 @@
 /* purgecss end ignore */
 @import 'tailwindcss/utilities';
 
-@import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900&display=swap');
-
 html {
-  font-family: 'M PLUS Rounded 1c', sans-serif;
   @apply bg-gray-300 leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased;
 }
-
 h1 {
-  @apply text-xl font-bold mt-2;
+  @apply text-2xl;
 }
-
 h2 {
-  @apply text-lg font-bold;
+  @apply text-xl;
 }
-
+h3 {
+  @apply text-lg;
+}
 h6 {
   @apply text-sm;
 }
-
-a {
-  @apply underline;
+article a {
+  @apply underline font-bold;
 }
-
-a:hover {
+article a:hover {
   @apply text-indigo-600;
-}
-
-p {
-  @apply mb-4;
-}
-
-p a {
-  @apply font-bold;
-}
-
-@screen sm {
-  h1 {
-    @apply text-3xl mt-0;
-  }
 }

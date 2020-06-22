@@ -14,26 +14,6 @@
         I’m also available for short, freelance development projects if you wish to <a href="mailto:mark@phunky.co.uk?subject=Let's work together">hire me</a>
       </p>
     </div>
-    <h2 class="text-ls sm:text-xl font-bold mt-6">
-      Still here? Right, well then...
-    </h2>
-    <ul class="text-sm sm:text-xl">
-      <li>
-        <router-link tag="a" :to="{path: 'now'}">
-          /now
-        </router-link>
-      </li>
-      <li>
-        <router-link tag="a" :to="{path: 'uses'}">
-          /uses
-        </router-link>
-      </li>
-      <li>
-        <router-link tag="a" :to="{path: 'about'}">
-          /about
-        </router-link>
-      </li>
-    </ul>
   </div>
 </template>
 
