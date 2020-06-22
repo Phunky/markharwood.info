@@ -12,16 +12,16 @@
     <h2>Hardware</h2>
     <ul>
       <li>
-        I run everything from my <a href="https://www.amazon.co.uk/Apple-MacBook-Retina-Display-15-inch/dp/B07F88JSSP/" target="_blank">MacBook Pro (Retina, 15-inch, Mid 2015)</a>.
+        I run everything from my <a href="https://amzn.to/2Zcu7ZV" target="_blank">MacBook Pro (Retina, 15-inch, Mid 2015)</a>.
       </li>
       <li>
-        I doodle and waste time on an <a href="https://www.amazon.co.uk/dp/B07NHQQ776" target="_blank">5th generation iPad Mini</a> with an <a href="https://www.amazon.co.uk/Apple-MU8F2ZM-A-Pencil-Generation/dp/B07K2PK3BV" target="_blank">Apple Pencil</a>.
+        I doodle and waste time on an <a href="https://amzn.to/2NjzUqP" target="_blank">5th generation iPad Mini</a> with an <a href="https://amzn.to/3esj3OG" target="_blank">Apple Pencil</a>.
       </li>
       <li>
-        Current mobile of choice is an <a href="https://www.amazon.co.uk/Apple-iPhone-SE-64-Smartphone-Rose-Gold/dp/B01NA6EPEV" target="_blank">64GB Rose Gold iPhone SE</a> which I picked up for £30 from eBay 🤑.
+        Current mobile of choice is an <a href="https://amzn.to/2V9Dh7Y" target="_blank">64GB Rose Gold iPhone SE</a> which I picked up for £30 from eBay 🤑.
       </li>
       <li>
-        I have a <a href="https://www.amazon.co.uk/Philips-499P9H-00-Widescreen-Multimedia/dp/B07MY2DXPH/" target="_blank">49" Phillips 499P9H</a> in the office, but sadly MacOS can't run this at full native resolution.
+        I have a <a href="https://amzn.to/315KuKj" target="_blank">49" Phillips 499P9H</a> in the office, but sadly MacOS can't run this at full native resolution.
       </li>
     </ul>
     <h2>Software</h2>
