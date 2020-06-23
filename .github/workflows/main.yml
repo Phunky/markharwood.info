@@ -22,6 +22,6 @@ jobs:
             AWS_BUCKET_NAME: ${{ secrets.S3_BUCKET }}
             SOURCE: dist
             WITH_DELETE: true
-            WITH_CLOUD_FRONT_INVALIDATION: false
+            WITH_CLOUD_FRONT_INVALIDATION: true
             AWS_CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
             AWS_CLOUDFRONT_INVALIDATION_PATH: /*

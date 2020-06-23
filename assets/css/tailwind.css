@@ -5,7 +5,7 @@
 @import 'tailwindcss/utilities';
 
 html {
-  @apply bg-gray-300 leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased;
+  @apply bg-gray-100 leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased;
 }
 h1 {
   @apply text-2xl;
