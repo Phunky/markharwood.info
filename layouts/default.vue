@@ -1,9 +1,6 @@
 <template>
   <main class="p-8 lg:ml-32 lg:mr-64">
-    <router-link
-      :to="{path: '/'}"
-      class="lg:absolute lg:left-0 lg:top-0 lg:ml-8 lg:mt-8"
-    >
+    <router-link to="/" class="lg:absolute lg:left-0 lg:top-0 lg:ml-8 lg:mt-8">
       <img src="~/assets/img/trippy.jpg" class="w-24 h-24 shadow rounded-full">
     </router-link>
     <header class="h-24">
@@ -17,10 +14,10 @@
         <span class="line-through">
           Projects
         </span>
-        <router-link tag="a" :to="{path: 'now'}">
+        <router-link tag="a" to="/now">
           Now
         </router-link>
-        <router-link tag="a" :to="{path: 'uses'}">
+        <router-link tag="a" to="/uses">
           Uses
         </router-link>
       </nav>
