@@ -1,7 +1,7 @@
 {
   "epoch": "2017-01-01 00:00:00",
   "title": "Mobilleo",
-  "description": "A revolutionary mobility as a service technology platform for business.",
+  "description": "<p>A revolutionary mobility as a service technology platform for business.</p>",
   "url": "https://www.mobilleo.com",
   "tags": [
     "Laravel", "VueJS", "PHP", "MySQL", "Redis",

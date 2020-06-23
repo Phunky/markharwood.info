@@ -1,7 +1,7 @@
 {
   "epoch": "2020-03-01 00:00:00",
   "title": "Near Yorkshire",
-  "description": "Find your nearest, independent alternatives to shopping at the supermarket, or ordering online!",
+  "description": "<p>Find your nearest, independent alternatives to shopping at the supermarket, or ordering online!</p>",
   "url": "https://nearyorkshire.com",
   "tags": [
     "Firebase","VueJS", "Github Actions"

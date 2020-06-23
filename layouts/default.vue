@@ -11,9 +11,9 @@
         <span class="line-through">
           Journal
         </span>
-        <span class="line-through">
+        <router-link tag="a" to="/projects">
           Projects
-        </span>
+        </router-link>
         <router-link tag="a" to="/now">
           Now
         </router-link>

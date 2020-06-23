@@ -3,12 +3,11 @@
     <h1>
       Uses
     </h1>
-    <h6 class="text-gray-600 mb-4">
+    <h6>
       This is my <a href="https://uses.tech/" target="_blank">/uses</a> page, be sure to checkout what other people use over at <a href="https://uses.tech/" target="_blank">uses.tech</a>.
     </h6>
-
     <p>I'd like to say that people often reach out and ask me what I use on a daily basis but they don't 🤪 but i'm sharing them with you anyway.</p>
-
+    <hr class="mb-4">
     <h2>Hardware</h2>
     <ul>
       <li>

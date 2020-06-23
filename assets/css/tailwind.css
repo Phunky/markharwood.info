@@ -8,16 +8,19 @@ html {
   @apply bg-gray-100 leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased;
 }
 h1 {
-  @apply text-2xl;
+  @apply text-2xl mb-4;
 }
 h2 {
-  @apply text-xl;
+  @apply text-xl mb-4;
 }
 h3 {
-  @apply text-lg;
+  @apply text-lg mb-4;
 }
 h6 {
-  @apply text-sm;
+  @apply text-sm mb-4 text-gray-600;
+}
+p {
+  @apply mb-4;
 }
 article a {
   @apply underline font-bold;
