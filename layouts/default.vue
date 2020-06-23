@@ -1,5 +1,5 @@
 <template>
-  <main class="p-8 lg:ml-32 lg:mr-64">
+  <main class="p-8 lg:ml-32 lg:mr-64 max-w-screen-lg">
     <router-link to="/" class="lg:absolute lg:left-0 lg:top-0 lg:ml-8 lg:mt-8">
       <img src="~/assets/img/trippy.jpg" class="w-24 h-24 shadow rounded-full">
     </router-link>
