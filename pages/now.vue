@@ -8,15 +8,16 @@
     </h6>
     <hr class="mb-4">
     <h6>
-      Last updated; Sunday 21st June 2020
+      Last updated; Sunday 12th July 2020
     </h6>
-    <p>So we're on week 13 of lockdown due to the Coronavirus pandemic and I'm currently furloughed from my day job and I'm starting to go stir-crazy with the change of routine. However it has allowed me to put a bit of focus into getting my personal site back up and running, which I guess is something...</p>
+    <p>So we're on week <strong>15</strong> of lockdown due to the Coronavirus pandemic and <span class="line-through">I'm currently furloughed from my day job</span> I've handed in my notice at <a href="https://www.fleetondemand.com" target="_blank">Fleetondemand</a> after <strong>eight years</strong> and looking forward to a fresh start next month.</p>
+    <p>Lockdown is still a bit of a struggle but I think we've all got used to the new way of life now and if I'm honest I really needed the rest as it forced me to reassess my priorities and realign them with what I actually want to achieve.</p>
     <h2>Manifesting</h2>
     <ul>
       <li>Kick start Made by Phunky and start Freelancing/Consulting again.</li>
-      <li>Get up at 6am and run daily.</li>
+      <li><span class="line-through">Get up at 6am and run daily</span> Been running 2 miles daily for the last 10 days.</li>
       <li>Actively blog on here more often.</li>
-      <li>Finishing a goddamn book.</li>
+      <li><span class="line-through">Finishing a goddamn book</span> Read <a href="https://www.lemnsissay.com/" target="_blank">Lemn Sissay</a> memoir <a href="https://amzn.to/2DBO5WH" target="_blank">"My name is Why"</a> cover-to-cover the day it arrived.</li>
     </ul>
   </div>
 </template>

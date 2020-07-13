@@ -8,18 +8,15 @@
         Mark Harwood
       </h1>
       <nav class="text-sm uppercase text-gray-600">
-        <span class="line-through">
-          Journal
-        </span>
-        <router-link tag="a" to="/projects">
-          Projects
-        </router-link>
-        <router-link tag="a" to="/now">
+        <nuxt-link tag="a" to="/now">
           Now
-        </router-link>
-        <router-link tag="a" to="/uses">
+        </nuxt-link>
+        <nuxt-link tag="a" to="/uses">
           Uses
-        </router-link>
+        </nuxt-link>
+        <a href="https://www.notion.so/Mark-Harwood-5d68c301d33548ebb7a542620332f8f5" target="_blank">
+          CV
+        </a>
       </nav>
     </header>
     <article class="sm:mt-8">

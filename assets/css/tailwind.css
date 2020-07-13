@@ -28,3 +28,7 @@ article a {
 article a:hover {
   @apply text-indigo-600;
 }
+
+blockquote {
+  @apply border-gray-600 border-l-8 pt-2 pb-1 px-4 mb-4 italic bg-gray-300 rounded;
+}
