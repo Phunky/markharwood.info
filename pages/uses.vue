@@ -17,7 +17,7 @@
         I doodle and waste time on an <a href="https://amzn.to/2NjzUqP" target="_blank">5th generation iPad Mini</a> with an <a href="https://amzn.to/3esj3OG" target="_blank">Apple Pencil</a>.
       </li>
       <li>
-        Current mobile of choice is an <a href="https://amzn.to/2V9Dh7Y" target="_blank">64GB Rose Gold iPhone SE</a> which I picked up for £30 from eBay 🤑.
+        Current mobile of choice is an <a href="https://amzn.to/2V9Dh7Y" target="_blank">16GB Rose Gold iPhone SE</a> which I picked up for £30 from eBay 🤑.
       </li>
       <li>
         I have a <a href="https://amzn.to/315KuKj" target="_blank">49" Phillips 499P9H</a> in the office, but sadly MacOS can't run this at full native resolution.
