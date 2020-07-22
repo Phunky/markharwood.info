@@ -11,16 +11,13 @@
     <h2>Hardware</h2>
     <ul>
       <li>
-        I run everything from my <a href="https://amzn.to/2Zcu7ZV" target="_blank">MacBook Pro (Retina, 15-inch, Mid 2015)</a>.
+        I run everything from my <a href="https://amzn.to/30Gtsk9" target="_blank">MacBook Pro (16-inch, Mid 2019)</a>.
       </li>
       <li>
         I doodle and waste time on an <a href="https://amzn.to/2NjzUqP" target="_blank">5th generation iPad Mini</a> with an <a href="https://amzn.to/3esj3OG" target="_blank">Apple Pencil</a>.
       </li>
       <li>
         Current mobile of choice is an <a href="https://amzn.to/2V9Dh7Y" target="_blank">16GB Rose Gold iPhone SE</a> which I picked up for £30 from eBay 🤑.
-      </li>
-      <li>
-        I have a <a href="https://amzn.to/315KuKj" target="_blank">49" Phillips 499P9H</a> in the office, but sadly MacOS can't run this at full native resolution.
       </li>
     </ul>
     <h2>Software</h2>
