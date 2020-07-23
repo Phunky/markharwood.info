@@ -14,7 +14,9 @@
       I’m also available for <em>short</em> freelance development projects if you wish to <a href="mailto:mark@phunky.co.uk?subject=Let's work together">hire me</a>
     </p>
     <hr class="my-10">
-    <h1 class="mb-4 mt-2">🕹 Playing, Watching and Reading.</h1>
+    <h1 class="mb-4 mt-2">
+      🕹 Playing, Watching and Reading.
+    </h1>
     <div class="pwr">
       <template v-for="(item, key) in consuming">
         <a
@@ -25,7 +27,7 @@
           <img
             border="0"
             :src="item.image"
-          />
+          >
         </a>
       </template>
     </div>
