@@ -15,18 +15,21 @@
     </p>
     <hr class="my-10">
     <h1 class="mb-4 mt-2">
-      🕹 Playing, Watching and Reading.
+      🕹 Playing and consuming.
     </h1>
-    <div class="pwr">
+    <div class="grid grid-cols-2 md:grid-cols-10 md:grid-rows-none gap-2">
       <template v-for="(item, key) in consuming">
         <a
           :key="key"
           :href="item.link"
+          :class="item.type"
           target="_blank"
+          class="consuming border-4"
         >
           <img
             border="0"
             :src="item.image"
+            class="w-full object-fill md:h-32"
           >
         </a>
       </template>
@@ -60,7 +63,7 @@ export default {
         .only(['title', 'path', 'createdAt'])
         .fetch(),
       consuming: await $content('consuming')
-        .limit(10)
+        .limit(5)
         .sortBy('date', 'desc')
         .fetch()
     }
@@ -84,13 +87,7 @@ export default {
 </script>
 
 <style>
-.pwr a + a {
-  @apply ml-2;
-}
-.pwr a {
-  @apply inline-block border-4;
-}
-.pwr a img {
-  height: 130px;
+.consuming.tvshow {
+  @apply col-span-2;
 }
 </style>
