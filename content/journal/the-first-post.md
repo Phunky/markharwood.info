@@ -1,5 +1,6 @@
 ---
 title: The first post is always the most painful.
+tags: ['test', 'first-post']
 ---
 
 Spend all this time sorting out a blog/journal and then go totally blank when it comes to figuring out what to actually write.

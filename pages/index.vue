@@ -40,7 +40,7 @@
     </h1>
     <div v-for="(entry, key) in entries" :key="key" class="mt-4 mb-8">
       <h6 class="m-0">
-        {{ $dateFns.format(entry.createdAt, 'yyyy-MM-dd') }}
+        {{ $dateFns.format(entry.createdAt, 'EEEE, io MMMM yyyy') }}
       </h6>
       <h3>
         <nuxt-link

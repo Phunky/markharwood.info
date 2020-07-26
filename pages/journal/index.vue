@@ -1,25 +1,18 @@
 <template>
   <div>
-    <h1>
-      Journal
-    </h1>
-    <h6 class="text-gray-600">
-      I try to write, yet I fail often.
-    </h6>
-    <hr>
     <div v-for="(entry, key) in entries" :key="key" class="mt-4 mb-8">
-      <h2>{{ entry.title }}</h2>
-      <pre>{{ entry }}</pre>
-      <div v-html="entry.description" />
-      <h6>
+      <h6 class="m-0">
+        {{ $dateFns.format(entry.createdAt, 'EEEE, io MMMM yyyy') }}
+      </h6>
+      <h3>
         <nuxt-link
           tag="a"
           :to="entry.path"
-          class="text-gray-600 font-normal no-underline hover:underline"
+          class="font-bold underline"
         >
-          View this entry →
+          {{ entry.title }}
         </nuxt-link>
-      </h6>
+      </h3>
     </div>
   </div>
 </template>
@@ -30,7 +23,7 @@ export default {
   async asyncData ({ $content }) {
     return {
       entries: await $content('journal')
-        .only(['title', 'slug', 'path'])
+        .only(['title', 'path', 'createdAt'])
         .fetch()
     }
   }

@@ -8,6 +8,9 @@
         Mark Harwood
       </h1>
       <nav class="text-sm uppercase text-gray-600">
+        <nuxt-link tag="a" to="/journal">
+          Journal
+        </nuxt-link>
         <nuxt-link tag="a" to="/now">
           Now
         </nuxt-link>
