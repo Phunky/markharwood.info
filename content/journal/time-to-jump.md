@@ -1,5 +1,5 @@
 ---
-title: It's time to jump.
+title: It's time to jump
 tags: ['life', 'rant']
 ---
 I handed in my notice at the beginning of July, a time when most people are worrying about redundancy due to COVID-19 and the uncertainty that it has brought to the world. However for me it confirmed what I had been feeling for sometime, it was time to jump, to move on, to find something that would align better with myself and my values on how to build products.
