@@ -63,8 +63,8 @@ export default {
         .only(['title', 'path', 'createdAt'])
         .fetch(),
       consuming: await $content('consuming')
-        .limit(5)
         .sortBy('date', 'desc')
+        .limit(5)
         .fetch()
     }
   },
