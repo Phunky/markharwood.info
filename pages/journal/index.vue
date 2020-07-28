@@ -24,6 +24,7 @@ export default {
     return {
       entries: await $content('journal')
         .only(['title', 'path', 'createdAt'])
+        .sortBy('createdAt', 'desc')
         .fetch()
     }
   }

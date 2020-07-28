@@ -61,10 +61,11 @@ export default {
     return {
       entries: await $content('journal')
         .only(['title', 'path', 'createdAt'])
+        .sortBy('createdAt', 'desc')
         .fetch(),
       consuming: await $content('consuming')
         .sortBy('date', 'desc')
-        .limit(5)
+        .limit(10)
         .fetch()
     }
   },
