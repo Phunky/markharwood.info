@@ -2,7 +2,7 @@
   <div>
     <div v-for="(entry, key) in entries" :key="key" class="mt-4 mb-8">
       <h6 class="m-0">
-        {{ $dateFns.format(entry.createdAt, 'EEEE, io MMMM yyyy') }}
+        {{ $dateFns.format(entry.date, 'EEEE, do MMMM yyyy') }}
       </h6>
       <h3>
         <nuxt-link
@@ -23,8 +23,8 @@ export default {
   async asyncData ({ $content }) {
     return {
       entries: await $content('journal')
-        .only(['title', 'path', 'createdAt'])
-        .sortBy('createdAt', 'desc')
+        .only(['title', 'path', 'date'])
+        .sortBy('date', 'desc')
         .fetch()
     }
   }

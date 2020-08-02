@@ -1,7 +1,7 @@
 <template>
   <div v-if="entry">
     <h6 class="m-0">
-      {{ $dateFns.format(entry.createdAt, 'EEEE, io MMMM yyyy') }}
+      {{ $dateFns.format(entry.date, 'EEEE, do MMMM yyyy') }}
     </h6>
     <h1>
       {{ entry.title }}
@@ -45,7 +45,7 @@ export default {
     const [prev, next] = await $content('journal')
       .only(['title', 'path'])
       .surround(params.slug)
-      .sortBy('createdAt', 'asc')
+      .sortBy('date', 'asc')
       .fetch()
     return {
       entry,
