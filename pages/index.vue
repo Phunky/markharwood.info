@@ -8,10 +8,7 @@
       For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.
     </p>
     <p>
-      Currently I'm working as Head of Engineering at <a href="https://orcascan.com" target="_blank">Orca Scan</a>, enabling companies to build enterprise barcode systems using just smartphones. Previously I was Product Director for <a href="https://mobilleo.com" target="_blank">Mobilleo</a> at <a href="https://fleetondemand.com" target="_blank">Fleetondemand</a>.
-    </p>
-    <p>
-      I’m also available for <em>short</em> freelance development projects if you wish to <a href="mailto:mark@phunky.co.uk?subject=Let's work together">hire me</a>
+      Currently I'm working as Lead Frontend Engineer at <a href="https://www.virtuoso.qa" target="_blank">Virtuoso</a>, enabling teams to test faster with codeless, self-maintaining, automation in the cloud. Previously Head of Engineering at <a href="https://orcascan.com" target="_blank">Orca Scan</a>, Product Director at <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
     </p>
     <hr class="my-10">
     <h1 class="mb-4 mt-2">
