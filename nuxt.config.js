@@ -1,3 +1,4 @@
+import tailwindTypography from '@tailwindcss/typography'
 
 export default {
   mode: 'spa',
@@ -78,5 +79,10 @@ export default {
     port: 3000,
     host: '0.0.0.0',
     timing: false
+  },
+  tailwindcss: {
+    config: {
+      plugins: [tailwindTypography]
+    }
   }
 }
