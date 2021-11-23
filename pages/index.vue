@@ -14,7 +14,7 @@
     <h1 class="mb-4 mt-2">
       🕹 Playing and consuming.
     </h1>
-    <div class="grid grid-cols-2 md:grid-cols-10 md:grid-rows-none gap-2">
+    <div class="grid grid-cols-2 md:grid-cols-8 gap-2">
       <template v-for="(item, key) in consuming">
         <a
           :key="key"
@@ -62,7 +62,7 @@ export default {
         .fetch(),
       consuming: await $content('consuming')
         .sortBy('date', 'desc')
-        .limit(10)
+        .limit(20)
         .fetch()
     }
   },
