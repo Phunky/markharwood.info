@@ -33,7 +33,7 @@ module.exports = {
       'blue-700',
       'indigo-700',
       'purple-700',
-      'pink-700',
+      'pink-700'
     ]
   },
   theme: {
