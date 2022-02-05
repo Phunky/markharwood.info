@@ -17,9 +17,6 @@
         <nuxt-link tag="a" to="/uses">
           Uses
         </nuxt-link>
-        <a href="https://www.notion.so/Mark-Harwood-5d68c301d33548ebb7a542620332f8f5" target="_blank">
-          CV
-        </a>
       </nav>
     </header>
     <article class="sm:mt-8">
