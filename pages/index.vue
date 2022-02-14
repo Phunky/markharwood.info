@@ -8,7 +8,7 @@
       For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.
     </p>
     <p>
-      Currently I'm working as an Engineering Manager at <a href="https://www.midnite.com" target="_blank">Midnite</a>, building the future of betting and entertainment, previously Head of Engineering at <a href="https://orcascan.com" target="_blank">Orca Scan</a> and Product Director <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
+      Currently taking a much needed break to reset and look after myself, previously Head of Engineering at <a href="https://orcascan.com" target="_blank">Orca Scan</a> and Product Director <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
     </p>
     <hr class="my-10">
     <h1 class="mb-4 mt-2">
