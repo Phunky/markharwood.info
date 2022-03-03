@@ -1,7 +1,7 @@
 import tailwindTypography from '@tailwindcss/typography'
 
 export default {
-  mode: 'spa',
+  ssr: true,
   target: 'static',
   components: true,
   /*

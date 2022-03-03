@@ -1,3 +1,4 @@
+
 <template>
   <div>
     <h1>
@@ -37,6 +38,12 @@
     </ul>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'UsesPage'
+}
+</script>
 
 <style>
   ul {

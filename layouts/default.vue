@@ -1,7 +1,9 @@
 <template>
   <main class="p-8 lg:ml-32 max-w-screen-lg">
-    <router-link to="/" class="lg:absolute lg:left-0 lg:top-0 lg:ml-8 lg:mt-8">
-      <img src="~/assets/img/trippy.jpg" class="w-24 h-24 shadow rounded-full">
+    <router-link to="/">
+      <span class="lg:absolute lg:left-0 lg:top-0 lg:ml-8 lg:mt-8">
+        <img src="~/assets/img/trippy.jpg" class="w-24 h-24 shadow rounded-full">
+      </span>
     </router-link>
     <header class="h-24">
       <h1 class="font-bold text-4xl mb-0">
@@ -24,6 +26,12 @@
     </article>
   </main>
 </template>
+
+<script>
+export default {
+  name: 'LayoutDefault'
+}
+</script>
 
 <style>
 nav a + a,

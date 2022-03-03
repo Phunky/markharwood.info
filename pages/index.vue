@@ -54,6 +54,7 @@
 
 <script>
 export default {
+  name: 'IndexPage',
   async asyncData ({ $content }) {
     return {
       entries: await $content('journal')

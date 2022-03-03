@@ -36,8 +36,8 @@ export default {
     },
     randomColor () {
       const colours = [
-        'red', 'orange', 'yellow', 'green',
-        'teal', 'blue', 'indigo', 'purple', 'pink'
+        'red', 'amber', 'yellow', 'emerald',
+        'teal', 'blue', 'indigo', 'violet', 'pink'
       ]
       const shades = [
         300, 500, 700

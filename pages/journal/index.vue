@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  name: 'Journal',
+  name: 'JournalIndex',
   async asyncData ({ $content }) {
     return {
       entries: await $content('journal')
