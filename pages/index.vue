@@ -58,7 +58,7 @@ export default {
         .fetch(),
       consuming: await $content('consuming')
         .sortBy('date', 'desc')
-        .limit(20)
+        .limit('20')
         .fetch()
     }
   },
@@ -81,6 +81,7 @@ export default {
 </script>
 
 <style>
+.consuming.movie,
 .consuming.tvshow {
     @apply col-span-2;
 }
