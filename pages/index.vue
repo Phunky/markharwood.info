@@ -4,11 +4,14 @@
       👋 {{ welcome }} I'm Mark.
     </Twinkle>
 
+    <p>For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.</p>
     <p>
-      For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.
-    </p>
-    <p>
-      Currently taking a much needed break to reset and look after myself, previously Head of Engineering at <a href="https://orcascan.com" target="_blank">Orca Scan</a> and Product Director <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
+      Currently taking a much needed break to reset and look after myself, previously Head of Engineering at
+      <a
+        href="https://orcascan.com"
+        target="_blank"
+      >Orca Scan</a> and Product Director
+      <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
     </p>
     <hr class="my-10">
     <h1 class="mb-4 mt-2">
@@ -23,11 +26,7 @@
           target="_blank"
           class="consuming border-4"
         >
-          <img
-            border="0"
-            :src="item.image"
-            class="w-full object-fill md:h-32"
-          >
+          <img border="0" :src="item.image" class="w-full object-fill md:h-32">
         </a>
       </template>
     </div>
@@ -40,11 +39,7 @@
         {{ $dateFns.format(entry.date, 'EEEE, do MMMM yyyy') }}
       </h6>
       <h3>
-        <nuxt-link
-          tag="a"
-          :to="entry.path"
-          class="font-bold underline"
-        >
+        <nuxt-link tag="a" :to="entry.path" class="font-bold underline">
           {{ entry.title }}
         </nuxt-link>
       </h3>
@@ -87,6 +82,6 @@ export default {
 
 <style>
 .consuming.tvshow {
-  @apply col-span-2;
+    @apply col-span-2;
 }
 </style>
