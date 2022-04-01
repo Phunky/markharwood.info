@@ -39,8 +39,8 @@
         {{ $dateFns.format(entry.date, 'EEEE, do MMMM yyyy') }}
       </h6>
       <h3>
-        <nuxt-link tag="a" :to="entry.path" class="font-bold underline">
-          {{ entry.title }}
+        <nuxt-link v-slot="{ navigate }" custom :to="entry.path">
+          <a class="font-bold underline" @click="navigate" @keypress.enter="navigate">{{ entry.title }}</a>
         </nuxt-link>
       </h3>
     </div>
