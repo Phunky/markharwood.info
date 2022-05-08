@@ -6,12 +6,7 @@
 
     <p>For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.</p>
     <p>
-      Currently taking a much needed break to reset and look after myself, previously Head of Engineering at
-      <a
-        href="https://orcascan.com"
-        target="_blank"
-      >Orca Scan</a> and Product Director
-      <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
+      Currently contracting at <a href="http://the49.com/" target="_blank">the49</a> as Frontend Developer, previously Head of Engineering at <a href="https://orcascan.com"target="_blank">Orca Scan</a> and Product Director <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
     </p>
     <hr class="my-10">
     <h1 class="mb-4 mt-2">
