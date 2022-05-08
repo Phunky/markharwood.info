@@ -10,11 +10,11 @@
     <p>As predicted this page hasn't been touched since it was launched almost year ago... So I'll keep this short.</p>
     <h2>Manifesting</h2>
     <ul>
-      <li>Still watching <a href="https://uk.finance.yahoo.com/quote/AMC?p=AMC" target="_blank">AMC</a>, but now hoping that it's value hits the $30s again so I can recoup some of my losses :(.</li>
+      <li>Still watching <a href="https://uk.finance.yahoo.com/quote/AMC?p=AMC" target="_blank">AMC</a>, but now hoping that it's value hits the $30s again so I can recoup some of my losses 😢</li>
       <li>Stopped my daily runs and doubled down on the gym. Still need a better workout plan than my tweaked 5x5 Stronglifts tho.</li>
       <li><b>Write on here more often</b>.</li>
       <li>Playing a lot of <a href="https://www.oculus.com/experiences/quest/5157404804284116/?msclkid=ec141f74cf0611ec812a2b8bc322c01a" target="_blank">Nock</a> on the Oculus Quest</li>
-      <li>Starting divorce proceedings :(</li>
+      <li>Starting divorce proceedings 😢</li>
     </ul>
     <hr class="mt-8 mb-4">
     <div>
