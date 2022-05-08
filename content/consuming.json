@@ -1,11 +1,11 @@
 [
   {
-    "date": "2022-05-06T00:00:02",
+    "date": "2022-05-06T04:00:02",
     "type": "tvshow",
     "name": "The Walking Dead: World Beyond",
     "slug": "the_walking_dead_world_beyond",
     "link": "https://www.imdb.com/title/tt10234724/",
-    "image": "//www.bing.com/th?id=ODL.15b985c0a342c9314440fc5489c23a6b&w=135&h=200&c=12&rs=1&qlt=90&o=6&pid=13.1"
+    "image": "//m.media-amazon.com/images/I/91fBs1QmtJL._AC_UY218_.jpg"
   },
   {
     "date": "2022-05-06T00:02:30",
@@ -14,6 +14,14 @@
     "slug": "doctor-strange-in-the-multiverse-of-dadness",
     "link": "https://www.imdb.com/title/tt9419884/",
     "image": "//m.media-amazon.com/images/M/MV5BNWM0ZGJlMzMtZmYwMi00NzI3LTgzMzMtNjMzNjliNDRmZmFlXkEyXkFqcGdeQXVyMTM1MTE1NDMx._V1_.jpg"
+  },
+{
+    "date": "2022-05-01T04:00:02",
+    "type": "tvshow",
+    "name": "The Walking Dead",
+    "slug": "the_walking_dead",
+    "link": "https://www.imdb.com/title/tt10234724/",
+    "image": "//m.media-amazon.com/images/I/91eIP4T0MaL._AC_UY218_.jpg"
   },
   {
     "date": "2022-04-01T13:02:30",
