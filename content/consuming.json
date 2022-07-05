@@ -1,5 +1,13 @@
 [
   {
+    "date": "2022-07-06T04:00:02",
+    "type": "tvshow",
+    "name": "Demon Slayer: Kimetsu no Yaiba",
+    "slug": "demon_slayer-Kimetsu_no_yaiba",
+    "link": "https://www.imdb.com/title/tt9335498/",
+    "image": "//imgs.search.brave.com/15P_NW3RTh8c3lRdfo8GafkQIbTLCrpW87ke72yz72E/rs:fit:844:225:1/g:ce/aHR0cHM6Ly90c2U0/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5B/Wko0Z2tHd255N21E/OExxY3Q4VDlnSGFF/SyZwaWQ9QXBp"
+  },
+  {
     "date": "2022-05-06T04:00:02",
     "type": "tvshow",
     "name": "The Walking Dead: World Beyond",
