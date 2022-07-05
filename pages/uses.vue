@@ -12,7 +12,7 @@
     <h2>Hardware</h2>
     <ul>
       <li>
-        I run everything from my <a href="https://www.apple.com/uk/macbook-pro-14-and-16/" target="_blank">MacBook Pro (14-inch, 2021)</a>.
+        I run everything from my <a href="https://www.apple.com/uk/macbook-air-m1/" target="_blank">M1 Macbook Air</a>.
       </li>
       <li>
         I time on an <a href="https://amzn.to/2NjzUqP" target="_blank">5th generation iPad Mini</a>.
