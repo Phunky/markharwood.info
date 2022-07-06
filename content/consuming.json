@@ -1,5 +1,21 @@
 [
   {
+    "date": "2022-06-29T13:02:30",
+    "type": "book",
+    "name": "1984",
+    "slug": "1984",
+    "link": "https://www.amazon.co.uk/Baker-Street-Readers-George-Orwell/dp/1912464454/",
+    "image": "//images-na.ssl-images-amazon.com/images/I/51TBSE-LWbL._SX331_BO1,204,203,200_.jpg"
+  },
+  {
+    "date": "2022-07-01T13:02:30",
+    "type": "book",
+    "name": "The Mountain Is You: Transforming Self-Sabotage into Self-Mastery",
+    "slug": "the_mountain_is_you",
+    "link": "https://www.amazon.co.uk/Mountain-You-Transforming-Self-Sabotage-Self-Mastery/dp/B09WXLQXFC/",
+    "image": "//m.media-amazon.com/images/I/41jiySKmibL.jpg"
+  },
+  {
     "date": "2022-07-06T04:00:02",
     "type": "tvshow",
     "name": "Demon Slayer: Kimetsu no Yaiba",
