@@ -1,5 +1,13 @@
 [
   {
+    "date": "2022-07-29T13:02:30",
+    "type": "tvshow",
+    "name": "American Horror Stories",
+    "slug": "american_horror_stories",
+    "link": "https://www.imdb.com/title/tt12306692/",
+    "image": "//encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHE8ElhofWcmSnI903yGn0I806y8ENKg2U8g&usqp=CAU"
+  },
+  {
     "date": "2022-06-29T13:02:30",
     "type": "book",
     "name": "1984",
