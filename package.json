@@ -12,5 +12,11 @@
   },
   "dependencies": {
     "astro": "^1.7.2"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.13",
+    "cssnano": "^5.1.14",
+    "postcss-nesting": "^10.2.0",
+    "postcss-preset-env": "^7.8.3"
   }
 }
