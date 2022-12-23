@@ -10,7 +10,7 @@ jobs:
         - name: Install dependencies
           run: npm install
         - name: Build
-          run: npm build
+          run: npm run build
         - name: Sync to S3
           uses: raulanatol/aws-s3-docker-action@master
           env:
