@@ -16,7 +16,7 @@ const values = [
 ]
 const welcome = values[Math.floor(Math.random() * values.length)]
 
-const posts = await Astro.glob('./posts/*.md');
+const posts = await Astro.glob('../posts/*.md');
 
 const consuming = orderBy(json, ['date'], ['desc']).slice(0, 20);
 

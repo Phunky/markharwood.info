@@ -4,7 +4,7 @@ import Layout from '../layouts/Layout.astro';
 import { format } from 'date-fns'
 
 // Import multiple files with Astro.glob
-const posts = await Astro.glob('./posts/*.md');
+const posts = await Astro.glob('../posts/*.md');
 ---
 
 <Layout title="Welcome to Astro.">
