@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
+import { format } from 'date-fns'
+
 // Import multiple files with Astro.glob
 const posts = await Astro.glob('./posts/*.md');
 ---
@@ -11,7 +13,7 @@ const posts = await Astro.glob('./posts/*.md');
     <div class="mt-4 mb-8">
       {posts.map(post =>
         <h6 class="m-0">
-          {post.frontmatter.date}
+          {format(new Date(post.frontmatter.date), 'EEEE, do MMMM yyyy')}
         </h6>
         <h3>
           <a

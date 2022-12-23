@@ -45,7 +45,11 @@ const { title } = Astro.props;
 	</body>
 </html>
 
-<style>
+<style is:global>
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
   @apply bg-gray-100 leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased;
 }
