@@ -1,10 +1,28 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+// Import multiple files with Astro.glob
+const posts = await Astro.glob('./posts/*.md');
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>
 		<h1>Jornal</h1>
+    <div class="mt-4 mb-8">
+      {posts.map(post =>
+        <h6 class="m-0">
+          {post.frontmatter.date}
+        </h6>
+        <h3>
+          <a
+            href={post.url}
+            class="font-bold underline"
+          >
+            {post.frontmatter.title}
+          </a>
+        </h3>
+      )}
+    </div>
 	</main>
 </Layout>
 
