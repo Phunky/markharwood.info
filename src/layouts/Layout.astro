@@ -16,20 +16,62 @@ const { title } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body>
-		<slot />
+    <main class="p-8 lg:ml-32 max-w-screen-lg">
+    <a href="/">
+      <span class="lg:absolute lg:left-0 lg:top-0 lg:ml-8 lg:mt-8">
+        <img src="/img/trippy.jpg" class="w-24 h-24 shadow rounded-full">
+      </span>
+    </a>
+    <header class="h-24">
+      <h1 class="font-bold text-4xl mb-0">
+        Mark Harwood
+      </h1>
+      <nav class="text-sm uppercase text-gray-600">
+        <a href="/journal">
+          Journal
+        </a>
+        <a href="/now">
+          Now
+        </a>
+        <a href="/uses">
+          Uses
+        </a>
+      </nav>
+    </header>
+    <article class="sm:mt-8">
+      <slot />
+    </article>
+  </main>
 	</body>
 </html>
-<style is:global>
-	:root {
-		--accent: 124, 58, 237;
-		--accent-gradient: linear-gradient(45deg, rgb(var(--accent)), #da62c4 30%, white 60%);
-	}
-	html {
-		font-family: system-ui, sans-serif;
-		background-color: #F6F6F6;
-	}
-	code {
-		font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-			Bitstream Vera Sans Mono, Courier New, monospace;
-	}
+
+<style>
+html {
+  @apply bg-gray-100 leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased;
+}
+h1 {
+  @apply text-2xl mb-4;
+}
+h2 {
+  @apply text-xl mb-4;
+}
+h3 {
+  @apply text-lg mb-4;
+}
+h6 {
+  @apply text-sm mb-4 text-gray-600;
+}
+p {
+  @apply mb-4;
+}
+article a {
+  @apply underline font-bold;
+}
+article a:hover {
+  @apply text-indigo-600;
+}
+
+blockquote {
+  @apply border-gray-600 border-l-8 pt-2 pb-1 px-4 mb-4 italic bg-gray-300 rounded;
+}
 </style>
