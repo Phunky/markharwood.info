@@ -1,0 +1,31 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+import { format } from 'date-fns'
+
+// Import multiple files with Astro.glob
+const posts = await Astro.glob('./posts/*.md');
+---
+
+<Layout title="Welcome to Astro.">
+	<main>
+    <div class="mt-4 mb-8">
+      {posts.map(post =>
+        <h6 class="m-0">
+          {format(new Date(post.frontmatter.date), 'EEEE, do MMMM yyyy')}
+        </h6>
+        <h3>
+          <a
+            href={post.url}
+            class="font-bold underline"
+          >
+            {post.frontmatter.title}
+          </a>
+        </h3>
+      )}
+    </div>
+	</main>
+</Layout>
+
+<style>
+</style>

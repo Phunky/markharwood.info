@@ -8,11 +8,9 @@ jobs:
     steps:
         - uses: actions/checkout@v1
         - name: Install dependencies
-          run: yarn
+          run: npm install
         - name: Build
-          run: yarn build
-        - name: Export static
-          run: yarn export
+          run: npm build
         - name: Sync to S3
           uses: raulanatol/aws-s3-docker-action@master
           env:
