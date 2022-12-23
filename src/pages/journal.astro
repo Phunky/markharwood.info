@@ -9,7 +9,6 @@ const posts = await Astro.glob('./posts/*.md');
 
 <Layout title="Welcome to Astro.">
 	<main>
-		<h1>Jornal</h1>
     <div class="mt-4 mb-8">
       {posts.map(post =>
         <h6 class="m-0">

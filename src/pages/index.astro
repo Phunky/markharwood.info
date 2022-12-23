@@ -1,5 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import json from '../consuming.json';
+import { format } from 'date-fns';
+import { orderBy } from 'lodash';
+
 const values = [
   'Hey!',
   'Hello.',
@@ -11,6 +15,11 @@ const values = [
   'Howdy!'
 ]
 const welcome = values[Math.floor(Math.random() * values.length)]
+
+const posts = await Astro.glob('./posts/*.md');
+
+const consuming = orderBy(json, ['date'], ['desc']).slice(0, 20);
+
 ---
 
 <Layout title="Welcome to Astro.">
@@ -29,14 +38,40 @@ const welcome = values[Math.floor(Math.random() * values.length)]
       🕹 Playing and consuming.
     </h1>
     <div class="grid grid-cols-2 md:grid-cols-8 gap-2">
+      {consuming.map(item =>
+        <a
+          href={item.link}
+          class={`${item.type} consuming border-4`}
+          target="_blank"
+        >
+          <img src={item.image} class="w-full object-fill md:h-32">
+        </a>
+      )}
     </div>
     <hr class="my-10">
     <h1 class="mb-4 mt-2">
       ✍️ Writing and rambling.
     </h1>
+    {posts.map(post =>
+      <h6 class="m-0">
+        {format(new Date(post.frontmatter.date), 'EEEE, do MMMM yyyy')}
+      </h6>
+      <h3>
+        <a
+          href={post.url}
+          class="font-bold underline"
+        >
+          {post.frontmatter.title}
+        </a>
+      </h3>
+    )}
   </div>
 	</main>
 </Layout>
 
 <style>
+.consuming.movie,
+.consuming.tvshow {
+    @apply col-span-2;
+}
 </style>
