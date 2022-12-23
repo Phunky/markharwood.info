@@ -16,7 +16,7 @@ const posts = await Astro.glob('../posts/*.md');
         </h6>
         <h3>
           <a
-            href={post.url}
+            href={`/posts/${post.frontmatter.slug}`}
             class="font-bold underline"
           >
             {post.frontmatter.title}

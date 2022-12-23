@@ -19,7 +19,6 @@ const welcome = values[Math.floor(Math.random() * values.length)]
 const posts = await Astro.glob('../posts/*.md');
 
 const consuming = orderBy(json, ['date'], ['desc']).slice(0, 20);
-
 ---
 
 <Layout title="Welcome to Astro.">
@@ -58,7 +57,7 @@ const consuming = orderBy(json, ['date'], ['desc']).slice(0, 20);
       </h6>
       <h3>
         <a
-          href={post.url}
+          href={`/posts/${post.frontmatter.slug}`}
           class="font-bold underline"
         >
           {post.frontmatter.title}
