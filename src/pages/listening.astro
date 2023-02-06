@@ -1,24 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-const tracks = [
-  'https://lastfm.freetls.fastly.net/i/u/300x300/7d6bd3921021452b8892dd626fb303ca.jpg',
-  'https://lastfm.freetls.fastly.net/i/u/300x300/b301baa24b0db37b08e9314abcdbe63f.jpg',
-  'https://lastfm.freetls.fastly.net/i/u/300x300/32e39585c81aea5659da8433a29ec6a1.jpg',
-  'https://lastfm.freetls.fastly.net/i/u/300x300/12098b07c2774f8ccf8fa2f7b5b832e3.jpg',
-  'https://lastfm.freetls.fastly.net/i/u/300x300/4931266b32b38be5a27331475ec0f0cf.jpg',
-  'https://lastfm.freetls.fastly.net/i/u/300x300/0e5528726b67484aa0f4e8fdc497846b.jpg',
-  'https://lastfm.freetls.fastly.net/i/u/300x300/5d94b4b8f5184fc4a13072807d689a14.jpg',
-];
+const response = await fetch('https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=irPhunky&api_key=3e434c7a4ee434d124cf935094da3c7e&format=json&limit=16');
+const data = await response.json();
 ---
 
 <Layout title="Listening...">
 	<h1>Some tracks that I have recently been listening to.</h1>
 
   <div class="track">
-    {tracks.map(track =>
+    {data.recenttracks.track.map(track =>
       <div class="album-art">
-        <img src={track} alt="" />
+        <img src={track.image[3]['#text']} alt="" />
       </div>
     )}
   </div>
