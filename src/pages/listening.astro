@@ -32,17 +32,17 @@ const tracks = [
 
   .album-art {
     @apply w-32 h-32 bg-blue-200 -mr-20 transition-[margin,transform] ease-in-out transform rounded overflow-hidden drop-shadow-md;
+  }
 
-    &:nth-child(odd) {
-      @apply bg-green-300;
-    }
+  .album-art:nth-child(odd) {
+    @apply bg-green-300;
+  }
 
-    &:hover {
-      @apply -mt-6 -rotate-12 cursor-pointer drop-shadow-lg scale-150;
+  .album-art:hover {
+    @apply -mt-6 -rotate-12 cursor-pointer drop-shadow-lg scale-150;
+  }
 
-      .album-art + & {
-        @apply -mr-0;
-      }
-    }
+  .album-art + .album-art:hover {
+    @apply -mr-0;
   }
 </style>
