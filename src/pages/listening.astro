@@ -1,24 +1,34 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
-const response = await fetch('https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=irPhunky&api_key=3e434c7a4ee434d124cf935094da3c7e&format=json&limit=16');
-const data = await response.json();
 ---
 
 <Layout title="Listening...">
 	<h1>Some tracks that I have recently been listening to.</h1>
-
-  <div class="track">
-    {data.recenttracks.track.map(track =>
-      <div class="album-art">
-        <img src={track.image[3]['#text']} alt="" />
-      </div>
-    )}
-  </div>
-
+    <div class="track"></div>
+    <template>
+        <div class="album-art">
+            <img src="" alt="">
+        </div>
+    </template>
 </Layout>
 
-<style>
+<script>
+const response = await fetch('https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=irPhunky&api_key=3e434c7a4ee434d124cf935094da3c7e&format=json&limit=16');
+const data = await response.json();
+const fragment = new DocumentFragment();
+data.recenttracks.track.forEach((track) => {
+    let div = document.createElement('div');
+    div.setAttribute('class', 'album-art')
+    let img = document.createElement('img');
+    img.setAttribute('src', track.image[3]['#text']);
+    img.setAttribute('alt', '');
+    div.append(img)
+    fragment.appendChild(div);
+})
+document.querySelectorAll('.track')[0].appendChild(fragment);
+</script>
+
+<style is:global>
   .track {
     @apply flex;
   }
