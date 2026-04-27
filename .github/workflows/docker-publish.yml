@@ -41,7 +41,7 @@ jobs:
             type=raw,value=latest
             type=sha
 
-      # Set repository secrets: LASTFM_API_KEY (required for listening shelf in static HTML), LASTFM_USER (optional, default in app).
+      # Repository secrets (e.g. LASTFM_API_KEY) → PUBLIC_* so Vite exposes them to the client fetch.
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -50,7 +50,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            LASTFM_API_KEY=${{ secrets.LASTFM_API_KEY }}
-            LASTFM_USER=${{ secrets.LASTFM_USER }}
+            PUBLIC_LASTFM_API_KEY=${{ secrets.LASTFM_API_KEY }}
+            PUBLIC_LASTFM_USER=${{ secrets.LASTFM_USER }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

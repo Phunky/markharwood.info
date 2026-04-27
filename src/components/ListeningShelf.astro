@@ -1,18 +1,12 @@
 ---
-import { fetchListeningCovers } from '../lib/listening-shelf/covers';
-
 export interface Props {
   class?: string;
   /** e.g. "Recently listening" — omit to render no title */
   heading?: string;
   /** When the API returns no art */
   whenEmpty?: 'hide' | 'message';
-  /** Last.fm user; if omitted, uses `import.meta.env.LASTFM_USER` or `irPhunky` */
+  /** Last.fm user; if omitted, uses `import.meta.env.PUBLIC_LASTFM_USER` or `irPhunky` */
   lastfmUser?: string;
-  /**
-   * Optional override; if omitted, uses `import.meta.env.LASTFM_API_KEY` (set in `.env`; see `astro.config.mjs`).
-   */
-  lastfmApiKey?: string;
   maxTracks?: number;
   lastfmLimit?: number;
   /** Fetches iTunes for previews; when false, skips iTunes if Last.fm art is real (faster) */
@@ -25,80 +19,53 @@ const {
   heading,
   whenEmpty = 'hide',
   lastfmUser: lastfmUserProp,
-  lastfmApiKey,
-  maxTracks,
-  lastfmLimit,
-  enablePreviews,
-  itunesConcurrency,
+  maxTracks = 16,
+  lastfmLimit = 24,
+  enablePreviews = true,
+  itunesConcurrency = 4,
 } = Astro.props;
 
-const lastfmUser =
-  lastfmUserProp ?? (import.meta.env.LASTFM_USER || 'irPhunky');
-
-const covers = await fetchListeningCovers({
-  lastfmUser,
-  lastfmApiKey,
-  maxTracks,
-  lastfmLimit,
-  enablePreviews,
-  itunesConcurrency,
-});
+const lastfmUser = lastfmUserProp ?? (import.meta.env.PUBLIC_LASTFM_USER || 'irPhunky');
+const hasApiKey = Boolean(
+  import.meta.env.PUBLIC_LASTFM_API_KEY && import.meta.env.PUBLIC_LASTFM_API_KEY.length > 0
+);
 ---
 
 {
-  covers.length === 0 && whenEmpty === 'hide' ? null : (
-    <div class:list={['listening-shelf-root', className]} data-listening-shelf>
+  !hasApiKey && whenEmpty === 'hide' ? null : !hasApiKey && whenEmpty === 'message' ? (
+    <p class:list={['text-gray-600', className]}>No recent tracks right now.</p>
+  ) : (
+    <div
+      class:list={['listening-shelf-root', className]}
+      data-listening-shelf
+      data-when-empty={whenEmpty}
+      data-lastfm-user={lastfmUser}
+      data-max-tracks={String(maxTracks)}
+      data-lastfm-limit={String(lastfmLimit)}
+      data-itunes-concurrency={String(itunesConcurrency)}
+      data-enable-previews={enablePreviews ? 'true' : 'false'}
+    >
       {heading && (
         <h2 class="mb-4 mt-0 text-2xl font-bold text-indigo-900">
           {heading}
         </h2>
       )}
-      {covers.length === 0 ? (
-        whenEmpty === 'message' && <p class="text-gray-600">No recent tracks right now.</p>
-      ) : (
-        <>
-          <div class="listening-shelf-scroll">
-            <div class="listening-shelf" style={{ '--count': String(covers.length) }}>
-              {covers.map((cover, i) => (
-                <div
-                  class="album-art"
-                  data-index={String(i)}
-                  data-track={cover.track || 'Unknown track'}
-                  data-artist={cover.artist || 'Unknown artist'}
-                  data-preview-url={cover.previewUrl ?? undefined}
-                  style={{
-                    '--i': String(i),
-                    zIndex: i + 1,
-                  }}
-                >
-                  <div class="album-art-face">
-                    <img src={cover.src} alt={cover.alt} loading="lazy" decoding="async" />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div class="listening-track-line">
-              <div
-                class="listening-track-now"
-                role="status"
-                aria-live="polite"
-                hidden
-              />
-            </div>
-          </div>
-        </>
+      {hasApiKey && (
+        <p class="text-gray-600" data-shelf-status>Loading recent tracks…</p>
       )}
     </div>
   )
 }
 {
-  covers.length > 0 && (
+  hasApiKey && (
     <script>
-      import { initListeningShelves } from '../lib/listening-shelf/attach-behavior';
+      import { mountListeningShelves } from '../lib/listening-shelf/client-mount';
       if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initListeningShelves);
+        document.addEventListener('DOMContentLoaded', () => {
+          void mountListeningShelves();
+        });
       } else {
-        initListeningShelves();
+        void mountListeningShelves();
       }
     </script>
   )

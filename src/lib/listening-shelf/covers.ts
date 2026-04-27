@@ -45,34 +45,89 @@ function isPlaceholder(url: string): boolean {
 
 type ItunesHit = { artwork: string | null; preview: string | null };
 
-async function itunesFromSearch(
-  artist: string,
-  track: string,
-  album: string
+function parseItunesResult(data: {
+  results?: Array<{ artworkUrl100?: string; previewUrl?: string }>;
+}): ItunesHit | null {
+  const r = data.results?.[0];
+  if (!r) return null;
+  const artwork = r.artworkUrl100
+    ? r.artworkUrl100.replace(/100x100bb\.jpg/i, '600x600bb.jpg')
+    : null;
+  const preview =
+    typeof r.previewUrl === 'string' && r.previewUrl.length > 0 ? r.previewUrl : null;
+  return { artwork, preview };
+}
+
+/** iTunes search often blocks cross-origin `fetch` in browsers; JSONP still works. */
+function itunesFromSearchJsonp(
+  term: string,
+  signal?: AbortSignal
 ): Promise<ItunesHit | null> {
-  const term = [artist, track, album].filter(Boolean).join(' ').slice(0, 200);
-  if (!term.trim()) return null;
-  try {
+  if (!term.trim() || typeof document === 'undefined') return Promise.resolve(null);
+  if (signal?.aborted) return Promise.resolve(null);
+  return new Promise((resolve) => {
+    let finished = false;
+    const name = `__itunes_cb_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+    const w = globalThis as unknown as Record<string, ((data: { results?: Array<{ artworkUrl100?: string; previewUrl?: string }> }) => void) | undefined>;
+    const s = document.createElement('script');
+    const done = (val: ItunesHit | null) => {
+      if (finished) return;
+      finished = true;
+      if (s.parentNode) s.remove();
+      delete w[name];
+      resolve(val);
+    };
+    w[name] = (data) => {
+      done(parseItunesResult(data));
+    };
     const u = new URL('https://itunes.apple.com/search');
     u.searchParams.set('term', term);
     u.searchParams.set('limit', '1');
     u.searchParams.set('entity', 'song');
-    const res = await fetch(u.toString(), { headers: { Accept: 'application/json' } });
-    if (!res.ok) return null;
-    const data = (await res.json()) as {
-      results?: Array<{ artworkUrl100?: string; previewUrl?: string }>;
-    };
-    const r = data.results?.[0];
-    if (!r) return null;
-    const artwork = r.artworkUrl100
-      ? r.artworkUrl100.replace(/100x100bb\.jpg/i, '600x600bb.jpg')
-      : null;
-    const preview =
-      typeof r.previewUrl === 'string' && r.previewUrl.length > 0 ? r.previewUrl : null;
-    return { artwork, preview };
+    u.searchParams.set('callback', name);
+    s.src = u.toString();
+    s.onerror = () => done(null);
+    if (signal) {
+      const onAbort = () => {
+        done(null);
+      };
+      signal.addEventListener('abort', onAbort, { once: true });
+    }
+    document.head.appendChild(s);
+  });
+}
+
+async function itunesFromSearch(
+  artist: string,
+  track: string,
+  album: string,
+  options?: { signal?: AbortSignal }
+): Promise<ItunesHit | null> {
+  const term = [artist, track, album].filter(Boolean).join(' ').slice(0, 200);
+  if (!term.trim()) return null;
+  const { signal } = options ?? {};
+  if (signal?.aborted) return null;
+
+  const url = new URL('https://itunes.apple.com/search');
+  url.searchParams.set('term', term);
+  url.searchParams.set('limit', '1');
+  url.searchParams.set('entity', 'song');
+
+  try {
+    const res = await fetch(url.toString(), {
+      headers: { Accept: 'application/json' },
+      signal,
+    });
+    if (res.ok) {
+      return parseItunesResult((await res.json()) as { results?: Array<{ artworkUrl100?: string; previewUrl?: string }> });
+    }
   } catch {
-    return null;
+    /* try jsonp in browser (CORS) or give up in Node */
   }
+  if (typeof document !== 'undefined' && !signal?.aborted) {
+    return itunesFromSearchJsonp(term, signal);
+  }
+  return null;
 }
 
 export type ListeningCover = {
@@ -84,18 +139,15 @@ export type ListeningCover = {
 };
 
 export type FetchListeningCoversOptions = {
-  /** Last.fm user name */
   lastfmUser: string;
-  /** If unset, uses `import.meta.env.LASTFM_API_KEY` (set in `.env`, wired in `astro.config.mjs`) */
+  /** Override; in the browser the default is `import.meta.env.PUBLIC_LASTFM_API_KEY` */
   lastfmApiKey?: string;
-  /** How many unique tracks to show (after de-dupe) */
   maxTracks?: number;
-  /** How many recent items to pull from Last.fm (before de-dupe) */
   lastfmLimit?: number;
-  /** Fetches iTunes for preview + placeholder replacement; if false, skips iTunes when art is already real */
   enablePreviews?: boolean;
-  /** Max concurrent iTunes search requests (default 4) */
   itunesConcurrency?: number;
+  /** Aborts Last.fm and in-flight fetches (not JSONP; best-effort) */
+  signal?: AbortSignal;
 };
 
 function lastFmUrl(user: string, apiKey: string, limit: number): string {
@@ -104,7 +156,10 @@ function lastFmUrl(user: string, apiKey: string, limit: number): string {
   )}&api_key=${encodeURIComponent(apiKey)}&format=json&limit=${limit}`;
 }
 
-/** Run async work with a fixed concurrency cap (replaces N-wide Promise.all) */
+function defaultLastFmApiKey(): string {
+  return import.meta.env.PUBLIC_LASTFM_API_KEY ?? '';
+}
+
 async function mapPool<T, R>(
   items: readonly T[],
   limit: number,
@@ -126,8 +181,7 @@ async function mapPool<T, R>(
 }
 
 /**
- * Fetches unique recent tracks, enriches with iTunes (limited concurrency) when needed.
- * Server / build only — not for the browser.
+ * Fetches unique recent tracks and enriches with iTunes (works in the browser; safe to import from client).
  */
 export async function fetchListeningCovers(options: FetchListeningCoversOptions): Promise<ListeningCover[]> {
   const {
@@ -137,14 +191,16 @@ export async function fetchListeningCovers(options: FetchListeningCoversOptions)
     lastfmLimit = 24,
     enablePreviews = true,
     itunesConcurrency = 4,
+    signal,
   } = options;
 
-  const lastfmApiKey = keyProp ?? import.meta.env.LASTFM_API_KEY ?? '';
+  const lastfmApiKey = keyProp ?? defaultLastFmApiKey();
   if (!lastfmApiKey) return [];
+  if (signal?.aborted) return [];
 
   let covers: ListeningCover[] = [];
   try {
-    const res = await fetch(lastFmUrl(lastfmUser, lastfmApiKey, lastfmLimit));
+    const res = await fetch(lastFmUrl(lastfmUser, lastfmApiKey, lastfmLimit), { signal });
     if (!res.ok) throw new Error(String(res.status));
     const data = (await res.json()) as {
       recenttracks?: { track?: unknown };
@@ -166,6 +222,7 @@ export async function fetchListeningCovers(options: FetchListeningCoversOptions)
     }
 
     const enriched = await mapPool(unique, itunesConcurrency, async (track) => {
+      if (signal?.aborted) return null;
       let src = coverUrl(
         track as { image?: Array<{ size?: string; '#text'?: string }> | { size?: string; '#text'?: string } }
       );
@@ -177,7 +234,7 @@ export async function fetchListeningCovers(options: FetchListeningCoversOptions)
       const alt = name ? `${name} — ${artist}` : artist;
 
       const needsItunes = enablePreviews || isPlaceholder(src);
-      const itunes = needsItunes ? await itunesFromSearch(artist, name, album) : null;
+      const itunes = needsItunes ? await itunesFromSearch(artist, name, album, { signal }) : null;
       if (itunes) {
         if (isPlaceholder(src) && itunes.artwork) src = itunes.artwork;
       }

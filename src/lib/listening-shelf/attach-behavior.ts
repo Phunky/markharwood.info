@@ -35,7 +35,7 @@ function installUnlockOnce(): void {
   );
 }
 
-function bindShelf(wrap: Element): void {
+export function bindListeningShelf(wrap: Element): void {
   const root = wrap.querySelector('.listening-shelf-scroll');
   if (!root) return;
   const line = root.querySelector('.listening-track-line');
@@ -244,7 +244,7 @@ function bindShelf(wrap: Element): void {
 export function initListeningShelves(): void {
   document.querySelectorAll('[data-listening-shelf]').forEach((wrap) => {
     try {
-      bindShelf(wrap);
+      bindListeningShelf(wrap);
     } catch {
       /* ignore per-shelf failures */
     }

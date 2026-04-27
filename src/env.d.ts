@@ -1,7 +1,8 @@
 /// <reference types="astro/client" />
 
-/** Filled at build from `.env` via `astro.config.mjs` (`loadEnv` + `vite.define`) */
 interface ImportMetaEnv {
-  readonly LASTFM_API_KEY: string;
-  readonly LASTFM_USER: string;
+  /** Last.fm API key (bundled for client-side scrobble fetch — treat as public) */
+  readonly PUBLIC_LASTFM_API_KEY?: string;
+  /** Default Last.fm profile for `user.getrecenttracks` */
+  readonly PUBLIC_LASTFM_USER?: string;
 }

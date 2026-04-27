@@ -8,11 +8,11 @@ RUN npm ci
 
 COPY . .
 
-# Used at `npm run build` (static site prerender). Pass via `docker build --build-arg` or CI secrets.
-ARG LASTFM_API_KEY
-ARG LASTFM_USER
-ENV LASTFM_API_KEY=$LASTFM_API_KEY
-ENV LASTFM_USER=$LASTFM_USER
+# Inlined into the client bundle for browser Last.fm requests. Pass via build-args or CI secrets.
+ARG PUBLIC_LASTFM_API_KEY
+ARG PUBLIC_LASTFM_USER
+ENV PUBLIC_LASTFM_API_KEY=$PUBLIC_LASTFM_API_KEY
+ENV PUBLIC_LASTFM_USER=$PUBLIC_LASTFM_USER
 
 RUN npm run build
 
