@@ -1,7 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
-
-/** `user.getrecenttracks` returns per-track album art; weekly charts often only include the generic Last.fm placeholder. */
+/**
+ * `user.getrecenttracks` returns per-track album art; weekly charts often only include the generic Last.fm placeholder.
+ */
 const LASTFM_USER = 'irPhunky';
 const LASTFM_API_KEY = '3e434c7a4ee434d124cf935094da3c7e';
 const LASTFM_RECENT = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=24`;
@@ -69,6 +69,16 @@ async function itunesArtwork(artist: string, track: string, album: string): Prom
 
 type Cover = { src: string; alt: string; track: string; artist: string };
 
+export interface Props {
+  class?: string;
+  /** e.g. "Recently listening" — omit to render no title */
+  heading?: string;
+  /** When the API returns no art */
+  whenEmpty?: 'hide' | 'message';
+}
+
+const { class: className, heading, whenEmpty = 'hide' } = Astro.props;
+
 let covers: Cover[] = [];
 
 try {
@@ -115,56 +125,67 @@ try {
 }
 ---
 
-<Layout title="Listening...">
-  <h1>Some tracks that I have recently been listening to.</h1>
-  {
-    covers.length === 0 ? (
-      <p class="text-gray-600">No recent tracks right now.</p>
-    ) : (
-      <div class="listening-shelf-scroll">
-        <div class="listening-shelf" style={{ '--count': String(covers.length) }}>
-          {covers.map((cover, i) => (
-            <div
-              class="album-art"
-              data-index={String(i)}
-              data-track={cover.track || 'Unknown track'}
-              data-artist={cover.artist || 'Unknown artist'}
-              style={{
-                '--i': String(i),
-                zIndex: i + 1,
-              }}
-            >
-              <img src={cover.src} alt={cover.alt} loading="lazy" decoding="async" />
+{
+  covers.length === 0 && whenEmpty === 'hide' ? null : (
+    <div class:list={['listening-shelf-root', className]} data-listening-shelf>
+      {heading && (
+        <h2 class="mb-4 mt-0 text-2xl font-bold text-indigo-900">
+          {heading}
+        </h2>
+      )}
+      {covers.length === 0 ? (
+        whenEmpty === 'message' && <p class="text-gray-600">No recent tracks right now.</p>
+      ) : (
+        <>
+          <div class="listening-shelf-scroll">
+            <div class="listening-shelf" style={{ '--count': String(covers.length) }}>
+              {covers.map((cover, i) => (
+                <div
+                  class="album-art"
+                  data-index={String(i)}
+                  data-track={cover.track || 'Unknown track'}
+                  data-artist={cover.artist || 'Unknown artist'}
+                  style={{
+                    '--i': String(i),
+                    zIndex: i + 1,
+                  }}
+                >
+                  <img src={cover.src} alt={cover.alt} loading="lazy" decoding="async" />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div class="listening-track-line">
-          <div
-            class="listening-track-now"
-            role="status"
-            aria-live="polite"
-            hidden
-          />
-        </div>
-      </div>
-      <script is:inline>
-        document.addEventListener('DOMContentLoaded', () => {
-          const root = document.querySelector('.listening-shelf-scroll');
+            <div class="listening-track-line">
+              <div
+                class="listening-track-now"
+                role="status"
+                aria-live="polite"
+                hidden
+              />
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+{
+  covers.length > 0 && (
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('[data-listening-shelf]').forEach((wrap) => {
+          const root = wrap.querySelector('.listening-shelf-scroll');
           if (!root) return;
           const line = root.querySelector('.listening-track-line');
           const now = root.querySelector('.listening-track-now');
           if (!line || !now) return;
           const arts = root.querySelectorAll('.album-art');
-          /** Push strength decays with index distance from the hovered tile (nearest = largest). */
           const peerNudgePx = (distance) => {
             if (distance < 1) return 0;
             const v = 24 * 0.56 ** (distance - 1);
             return Math.max(0, Math.round(v));
           };
-          /** Nearer to an edge (fraction of line width) → align that side. */
           const EDGE = 0.24;
           const GUTTER = 8;
-          /** Dwell time before pop / peer nudge / label, so quick sweeps do not fire everything. */
           const PEEK_DELAY_MS = 55;
           const PEEK_CLASS = 'album-art--peek';
           let peekTimer = null;
@@ -291,32 +312,22 @@ try {
             if (hovered) placeLabel(hovered);
           });
         });
-      </script>
-    )
-  }
-</Layout>
-
+      });
+    </script>
+  )
+}
 <style is:global>
   @reference "tailwindcss";
 
-  /*
-    No min-height: the block shrinks to the row. (Inner shelf still sets height: var(--tile) so
-    absolute-positioned covers have a non-zero box — that is the art height, not extra whitespace.)
-  */
   .listening-shelf-scroll {
     @apply flex w-full min-w-0 flex-col gap-8 overflow-x-visible overflow-y-visible bg-transparent;
     container-type: inline-size;
   }
 
-  /*
-    Overlapping deck: step = half a tile. Natural width = tile × (n + 1) / 2. Cap tile with
-    min(8rem, 200cqi / (n + 1)) so the deck never exceeds this column; cqi is the container width.
-  */
   .listening-shelf {
     --tile: min(8rem, calc(200cqi / (var(--count) + 1)));
     --step: calc(0.5 * var(--tile));
     position: relative;
-    /* Row height: one cover height (covers are position:absolute; this reserves layout space) */
     height: var(--tile);
     width: min(
       100%,
@@ -330,10 +341,6 @@ try {
 
   .album-art {
     @apply absolute top-0 cursor-pointer bg-transparent drop-shadow-md;
-    /*
-      --peer-shift: when another tile is hovered, siblings nudge apart (set from JS).
-    */
-    /* overflow visible so scale(1.5) isn't clipped by the tile box */
     overflow: visible;
     left: calc(var(--i) * var(--step));
     width: var(--tile);
@@ -355,7 +362,6 @@ try {
     @apply drop-shadow-lg;
     z-index: 60;
     top: -1.65rem;
-    /* Lift + swing after peek delay; peer shift is 0 on the active tile */
     transform: translateX(0) rotate(-11deg) scale(1.5);
   }
 
