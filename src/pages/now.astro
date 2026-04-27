@@ -1,5 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { format } from 'date-fns';
+import { gitLastCommitIsoForPath } from '../lib/git-last-commit';
+
+const updatedIso =
+  import.meta.env.PUBLIC_NOW_LAST_UPDATED?.trim() ||
+  gitLastCommitIsoForPath('src/pages/now.astro');
+
+const lastUpdatedLabel = updatedIso
+  ? format(new Date(updatedIso), 'EEEE, do MMMM yyyy')
+  : null;
 ---
 
 <Layout title="Welcome to Astro.">
@@ -17,10 +27,11 @@ import Layout from '../layouts/Layout.astro';
       <li>Setting up a home lab...</li>
     </ul>
     <hr class="mt-8 mb-4">
-    <div>
-      <h6>Last updated; Friday 14th March 2025</h6>
-      You can view previous commits of this <a href="https://nownownow.com/about" target="_blank">nownownow</a> page on <a href="https://github.com/Phunky/markharwood.info/commits/production/pages/now.vue" target="_blank">Github</a>
-    </div>
+    {lastUpdatedLabel && (
+      <h6>
+        Last updated: {lastUpdatedLabel}
+      </h6>
+    )}
 	</main>
 </Layout>
 

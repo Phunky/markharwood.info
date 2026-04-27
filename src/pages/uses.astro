@@ -1,5 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { format } from 'date-fns';
+import { gitLastCommitIsoForPath } from '../lib/git-last-commit';
+
+const updatedIso =
+  import.meta.env.PUBLIC_USES_LAST_UPDATED?.trim() ||
+  gitLastCommitIsoForPath('src/pages/uses.astro');
+
+const lastUpdatedLabel = updatedIso
+  ? format(new Date(updatedIso), 'EEEE, do MMMM yyyy')
+  : null;
 ---
 
 <Layout title="Welcome to Astro.">
@@ -39,6 +49,12 @@ import Layout from '../layouts/Layout.astro';
         <a href="https://iterm2.com/" target="_blank">iTerm2</a> is my go to terminal emulator again with the <a href="https://github.com/Relaxed-Theme/relaxed-terminal-themes" target="_blank">Relaxed theme</a>. The last few years I've been using ZSH shell and <a href="https://github.com/zplug/zplug" target="_blank">ZPlug</a> but recently I've moved back to using <a href="https://fishshell.com/">Fish shell</a>.
       </li>
     </ul>
+    <hr class="mt-8 mb-4" />
+    {lastUpdatedLabel && (
+      <h6>
+        Last updated: {lastUpdatedLabel}
+      </h6>
+    )}
 	</main>
 </Layout>
 
