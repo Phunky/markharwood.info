@@ -2,20 +2,23 @@
 import Layout from '../../layouts/Layout.astro';
 
 export async function getStaticPaths() {
-  const posts = await Astro.glob('../../posts/**/*.md')
-
-  return posts.map(post => ({
-    params: {
-      slug: post.frontmatter.slug
-    },
-    props: {
-      post
-    },
-  }))
+  const modules = import.meta.glob('../../posts/**/*.md', { eager: true });
+  return Object.values(modules).map((mod: { frontmatter: { slug: string } }) => ({
+    params: { slug: mod.frontmatter.slug },
+  }));
 }
 
-const { Content } = Astro.props.post
+const modules = import.meta.glob('../../posts/**/*.md', { eager: true });
+const { slug } = Astro.params;
+const mod = Object.values(modules).find(
+  (m: { frontmatter: { slug: string } }) => m.frontmatter.slug === slug
+);
+if (!mod) {
+  throw new Error(`Missing post: ${slug}`);
+}
+const { Content } = mod as { Content: (props?: Record<string, unknown>) => unknown };
 ---
+
 <Layout title="Welcome to Astro.">
-  <Content/>
+  <Content />
 </Layout>

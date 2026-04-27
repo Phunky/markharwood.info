@@ -1,8 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import json from '../consuming.json';
 import { format } from 'date-fns';
-import orderBy from 'lodash/orderBy';
 
 const values = [
   'Hey!',
@@ -16,9 +14,12 @@ const values = [
 ]
 const welcome = values[Math.floor(Math.random() * values.length)]
 
-const posts = await Astro.glob('../posts/*.md');
-
-const consuming = orderBy(json, ['date'], ['desc']).slice(0, 20);
+type PostEntry = {
+  frontmatter: { slug: string; title: string; date: string };
+};
+const posts = Object.values(
+  import.meta.glob('../posts/*.md', { eager: true })
+) as PostEntry[];
 ---
 
 <Layout title="Welcome to Astro.">
@@ -30,23 +31,8 @@ const consuming = orderBy(json, ['date'], ['desc']).slice(0, 20);
 
     <p>For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.</p>
     <p>
-      Currently contracting at <a href="http://the49.com/" target="_blank">the49</a> as Frontend Developer, previously Head of Engineering at <a href="https://orcascan.com"target="_blank">Orca Scan</a> and Product Director <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
+      Previously contracting at <a href="http://the49.com/" target="_blank">the49</a> as Software Engineer, Head of Engineering at <a href="https://orcascan.com" target="_blank">Orca Scan</a> and Product Director <a href="https://mobilleo.com" target="_blank">Mobilleo</a>.
     </p>
-    <hr class="my-10">
-    <h1 class="mb-4 mt-2">
-      🕹 Playing and consuming.
-    </h1>
-    <div class="grid grid-cols-2 md:grid-cols-8 gap-2">
-      {consuming.map(item =>
-        <a
-          href={item.link}
-          class={`${item.type} consuming border-4`}
-          target="_blank"
-        >
-          <img src={item.image} class="w-full object-fill md:h-32">
-        </a>
-      )}
-    </div>
     <hr class="my-10">
     <h1 class="mb-4 mt-2">
       ✍️ Writing and rambling.
@@ -67,10 +53,3 @@ const consuming = orderBy(json, ['date'], ['desc']).slice(0, 20);
   </div>
 	</main>
 </Layout>
-
-<style>
-.consuming.movie,
-.consuming.tvshow {
-    @apply col-span-2;
-}
-</style>

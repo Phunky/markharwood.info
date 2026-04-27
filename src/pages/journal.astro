@@ -1,10 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 
-import { format } from 'date-fns'
+import { format } from 'date-fns';
 
-// Import multiple files with Astro.glob
-const posts = await Astro.glob('../posts/*.md');
+type PostEntry = {
+  frontmatter: { slug: string; title: string; date: string };
+};
+const posts = Object.values(
+  import.meta.glob('../posts/*.md', { eager: true })
+) as PostEntry[];
 ---
 
 <Layout title="Welcome to Astro.">
@@ -26,6 +30,3 @@ const posts = await Astro.glob('../posts/*.md');
     </div>
 	</main>
 </Layout>
-
-<style>
-</style>

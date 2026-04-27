@@ -1,5 +1,5 @@
 ---
-title: The first post is always the most painful.
+title: "The first post is always the most painful."
 tags: ['test', 'first-post']
 date: "2020-07-01"
 slug: "the-first-post"
@@ -21,20 +21,20 @@ So instead i'll use this as some form of test page that I can use to play with s
 1. First item
 2. Second item
 3. Third item
-    1. Indented item
-    2. Indented item
+  1. Indented item
+  2. Indented item
 4. Fourth item
-
-    <html>
-      <head>
-      </head>
-    </html>
 
 I just love **bold text**.
 
 # Heading level 1
+
 ## Heading level 2
+
 ### Heading level 3
+
 #### Heading level 4
+
 ##### Heading level 5
+
 ###### Heading level 6

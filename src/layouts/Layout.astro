@@ -1,4 +1,6 @@
 ---
+import '../styles/global.css';
+
 export interface Props {
 	title: string;
 }
@@ -19,7 +21,11 @@ const { title } = Astro.props;
     <main class="p-8 lg:ml-32 max-w-screen-lg">
     <a href="/">
       <span class="lg:absolute lg:left-0 lg:top-0 lg:ml-8 lg:mt-8">
-        <img src="/img/trippy.jpg" class="w-24 h-24 shadow rounded-full">
+        <img
+          src="/img/mark-headshot.png"
+          class="w-24 h-24 shadow rounded-full object-cover"
+          alt="Headshot of Mark Harwood"
+        />
       </span>
     </a>
     <header class="h-24">
@@ -44,48 +50,3 @@ const { title } = Astro.props;
   </main>
 	</body>
 </html>
-
-<style is:global>
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-html {
-  @apply bg-gray-100 leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased;
-}
-h1 {
-  @apply text-2xl mb-4;
-}
-h2 {
-  @apply text-xl mb-4;
-}
-h3 {
-  @apply text-lg mb-4;
-}
-h6 {
-  @apply text-sm mb-4 text-gray-600;
-}
-p {
-  @apply mb-4;
-}
-article a {
-  @apply underline font-bold;
-}
-article a:hover {
-  @apply text-indigo-600;
-}
-
-blockquote {
-  @apply border-gray-600 border-l-8 pt-2 pb-1 px-4 mb-4 italic bg-gray-300 rounded;
-}
-
-nav a + a,
-nav a + span,
-nav span + a,
-nav span + span {
-  @apply ml-2;
-}
-nav a:hover {
-  @apply text-gray-900;
-}
-</style>
