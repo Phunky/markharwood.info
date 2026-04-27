@@ -6,6 +6,46 @@ const MOVE_CANCEL_PX = 14;
 /** How many cards are fanned in the pile at once (deeper in the list stay hidden until you swipe). */
 const MAX_IN_PILE = 6;
 
+/** Inline props set in `applyPile` (incl. `!important`); must not nuke --i / z-index from `buildShelfScroll` or desktop returns broken. */
+const MOBILE_PILE_STYLE_PROPS = [
+  'visibility',
+  'pointer-events',
+  'z-index',
+  'opacity',
+  'filter',
+  'transform',
+  'transition',
+  'left',
+] as const;
+
+function stripMobilePileInlineStyles(el: HTMLElement) {
+  for (const p of MOBILE_PILE_STYLE_PROPS) {
+    el.style.removeProperty(p);
+  }
+}
+
+function reapplyBaseAlbumArtFromDataIndex(el: HTMLElement) {
+  const raw = el.getAttribute('data-index');
+  if (raw == null) return;
+  const i = parseInt(raw, 10);
+  if (Number.isNaN(i)) return;
+  el.style.setProperty('--i', String(i));
+  el.style.setProperty('z-index', String(i + 1));
+}
+
+function prepareArtForMobileStack(el: HTMLElement) {
+  el.classList.remove('album-art--peek', 'album-art--stack-top');
+  el.style.removeProperty('--peer-shift');
+  stripMobilePileInlineStyles(el);
+  reapplyBaseAlbumArtFromDataIndex(el);
+}
+
+function resetArtForDesktopRow(el: HTMLElement) {
+  el.classList.remove('album-art--peek', 'album-art--stack-top');
+  stripMobilePileInlineStyles(el);
+  reapplyBaseAlbumArtFromDataIndex(el);
+}
+
 /**
  * 1 @ ~300px shelf width; scales offsets so a wider box uses the space instead of a small central clump.
  */
@@ -46,8 +86,7 @@ export function bindMobileStack(wrap: Element): () => void {
   const n = arts.length;
   if (n === 0) return () => {};
   for (const el of arts) {
-    el.removeAttribute('style');
-    el.classList.remove('album-art--peek', 'album-art--stack-top');
+    prepareArtForMobileStack(el);
   }
 
   const ac = new AbortController();
@@ -203,8 +242,7 @@ export function bindMobileStack(wrap: Element): () => void {
     preview.stop();
     shelf.classList.remove('listening-shelf--stack');
     for (const el of arts) {
-      el.classList.remove('album-art--stack-top');
-      el.removeAttribute('style');
+      resetArtForDesktopRow(el);
     }
     now.textContent = '';
     now.setAttribute('hidden', '');
