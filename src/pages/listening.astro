@@ -147,25 +147,29 @@ try {
   @reference "tailwindcss";
 
   /*
-    overflow-x: auto makes overflow-y compute to "auto" in most browsers, so tall hovers get clipped.
-    Give the row a generous min-height and center the shelf so scale(1.5) + lift stays inside the box.
+    Tall hovers: give the row room so scale(1.5) + lift stay inside the box. No horizontal scroll
+    — the shelf width is capped to the content column; tile + overlap scale down to fit.
   */
   .listening-shelf-scroll {
-    @apply flex min-h-80 items-center overflow-x-auto overflow-y-visible;
+    @apply flex w-full min-w-0 min-h-80 items-center overflow-x-visible overflow-y-visible;
+    container-type: inline-size;
   }
 
   /*
-    Absolute shelf: each cover is 8rem wide, placed every 4rem → 50% overlap.
-    (Flex + negative margins was unreliable with Tailwind v4 / intrinsic image sizing.)
+    Overlapping deck: step = half a tile. Natural width = tile × (n + 1) / 2. Cap tile with
+    min(8rem, 200cqi / (n + 1)) so the deck never exceeds this column; cqi is the container width.
   */
   .listening-shelf {
-    --tile: 8rem;
+    --tile: min(8rem, calc(200cqi / (var(--count) + 1)));
     --step: calc(0.5 * var(--tile));
     position: relative;
     height: var(--tile);
-    flex-shrink: 0;
-    /* Full deck width; horizontal scroll lives on .listening-shelf-scroll */
-    width: calc((var(--count) - 1) * var(--step) + var(--tile));
+    width: min(
+      100%,
+      calc((var(--count) + 1) * 0.5 * var(--tile))
+    );
+    max-width: 100%;
+    margin-inline: auto;
     overflow: visible;
   }
 
