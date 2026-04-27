@@ -164,6 +164,10 @@ try {
           /** Nearer to an edge (fraction of line width) → align that side. */
           const EDGE = 0.24;
           const GUTTER = 8;
+          /** Dwell time before pop / peer nudge / label, so quick sweeps do not fire everything. */
+          const PEEK_DELAY_MS = 55;
+          const PEEK_CLASS = 'album-art--peek';
+          let peekTimer = null;
           let hovered = null;
 
           const placeLabel = (art) => {
@@ -254,17 +258,32 @@ try {
           for (const el of arts) {
             el.addEventListener('mouseenter', () => {
               const i = Number(el.getAttribute('data-index'));
-              if (!Number.isNaN(i)) setPeerShift(i);
-              setNow(el);
+              clearTimeout(peekTimer);
+              peekTimer = setTimeout(() => {
+                peekTimer = null;
+                for (const a of arts) a.classList.remove(PEEK_CLASS);
+                el.classList.add(PEEK_CLASS);
+                if (!Number.isNaN(i)) setPeerShift(i);
+                setNow(el);
+              }, PEEK_DELAY_MS);
             });
-            el.addEventListener('mousemove', () => placeLabel(el));
+            el.addEventListener('mousemove', () => {
+              if (el.classList.contains(PEEK_CLASS)) placeLabel(el);
+            });
             el.addEventListener('transitionend', (e) => {
-              if (hovered === el && (e.propertyName === 'transform' || e.propertyName === 'top')) {
+              if (
+                hovered === el &&
+                el.classList.contains(PEEK_CLASS) &&
+                (e.propertyName === 'transform' || e.propertyName === 'top')
+              ) {
                 placeLabel(el);
               }
             });
           }
           root.addEventListener('mouseleave', () => {
+            clearTimeout(peekTimer);
+            peekTimer = null;
+            for (const a of arts) a.classList.remove(PEEK_CLASS);
             clearPeerShift();
             clearNow();
           });
@@ -309,7 +328,7 @@ try {
   }
 
   .album-art {
-    @apply absolute top-0 bg-blue-200 drop-shadow-md;
+    @apply absolute top-0 cursor-pointer drop-shadow-md;
     /*
       --peer-shift: when another tile is hovered, siblings nudge apart (set from JS).
     */
@@ -331,15 +350,11 @@ try {
     @apply block h-full w-full rounded-lg object-cover shadow-sm;
   }
 
-  .listening-shelf .album-art:nth-child(odd) {
-    @apply bg-green-300;
-  }
-
-  .listening-shelf .album-art:hover {
-    @apply cursor-pointer drop-shadow-lg;
+  .listening-shelf .album-art.album-art--peek {
+    @apply drop-shadow-lg;
     z-index: 60;
     top: -1.65rem;
-    /* All tiles: lift + swing out to the left slightly; peer shift is 0 on the hovered tile */
+    /* Lift + swing after peek delay; peer shift is 0 on the active tile */
     transform: translateX(0) rotate(-11deg) scale(1.5);
   }
 
