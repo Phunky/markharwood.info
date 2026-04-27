@@ -304,7 +304,7 @@ try {
     absolute-positioned covers have a non-zero box — that is the art height, not extra whitespace.)
   */
   .listening-shelf-scroll {
-    @apply flex w-full min-w-0 flex-col gap-8 overflow-x-visible overflow-y-visible;
+    @apply flex w-full min-w-0 flex-col gap-8 overflow-x-visible overflow-y-visible bg-transparent;
     container-type: inline-size;
   }
 
@@ -325,10 +325,11 @@ try {
     max-width: 100%;
     margin-inline: auto;
     overflow: visible;
+    background: transparent;
   }
 
   .album-art {
-    @apply absolute top-0 cursor-pointer drop-shadow-md;
+    @apply absolute top-0 cursor-pointer bg-transparent drop-shadow-md;
     /*
       --peer-shift: when another tile is hovered, siblings nudge apart (set from JS).
     */
@@ -347,7 +348,7 @@ try {
   }
 
   .album-art img {
-    @apply block h-full w-full rounded-lg object-cover shadow-sm;
+    @apply block h-full w-full rounded-lg object-cover bg-transparent;
   }
 
   .listening-shelf .album-art.album-art--peek {
