@@ -93,6 +93,49 @@ const hasApiKey = Boolean(
     background: transparent;
   }
 
+  /* Stacked deck on narrow viewports (see mobile-stack.ts) */
+  @media (max-width: 767px) {
+    .listening-shelf--stack {
+      /* Use the scroll track width; tile scales up with the viewport */
+      --stack-tile: min(17rem, min(94cqi, 92vw));
+      width: 100%;
+      max-width: 100%;
+      min-height: calc(var(--stack-tile) * 1.48 + 4.5rem);
+      height: auto;
+      padding-bottom: 0.5rem;
+      touch-action: pan-y;
+    }
+
+    .listening-shelf--stack .album-art {
+      width: var(--stack-tile);
+      height: var(--stack-tile);
+      top: 0.25rem;
+      overflow: visible;
+    }
+
+    .listening-shelf--stack .album-art--stack-top {
+      touch-action: manipulation;
+    }
+
+    .listening-shelf--stack .album-art img {
+      -webkit-touch-callout: none;
+      user-select: none;
+    }
+
+    .listening-shelf--stack + .listening-track-line .listening-track-now {
+      position: static;
+      max-width: 100%;
+      transform: none;
+      text-align: center;
+      left: auto;
+      right: auto;
+    }
+
+    .listening-shelf-scroll:has(.listening-shelf--stack) {
+      gap: 0.5rem;
+    }
+  }
+
   /* Outer shell stays the hit / layout box so peek transforms don’t drop hover / kill the 1s audio timer */
   .album-art {
     @apply absolute top-0 cursor-pointer bg-transparent;

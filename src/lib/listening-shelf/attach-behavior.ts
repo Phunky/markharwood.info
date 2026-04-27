@@ -1,6 +1,11 @@
 /**
- * Interactions for the listening shelf (hover stack, 30s preview, track label). Runs in the browser only.
+ * Interactions for the listening shelf. Desktop: hover + peek. Mobile: see `mobile-stack.ts`.
  */
+import { bindMobileStack } from './mobile-stack';
+import { createPreviewController, installPreviewUnlockOnce } from './preview-audio';
+
+const DESKTOP_MQ = '(min-width: 768px)';
+
 function peerNudgePx(distance: number): number {
   if (distance < 1) return 0;
   const v = 24 * 0.56 ** (distance - 1);
@@ -10,81 +15,32 @@ function peerNudgePx(distance: number): number {
 const EDGE = 0.24;
 const GUTTER = 8;
 const PEEK_DELAY_MS = 55;
-/** ~1 frame past peek: avoids noise on a very fast sweep without a long wait */
 const AUDIO_DELAY_MS = 80;
-/** Past `.album-art-face` / peer `transform` transitions (380ms) so the first label position matches the final layout */
 const PEEK_SETTLE_MS = 400;
 const PEEK_CLASS = 'album-art--peek';
 
-function installUnlockOnce(): void {
-  const w = window as typeof window & { __listeningShelfUnlockPlaced?: boolean };
-  if (w.__listeningShelfUnlockPlaced) return;
-  w.__listeningShelfUnlockPlaced = true;
-  document.addEventListener(
-    'pointerdown',
-    function () {
-      const a = new Audio();
-      a.muted = true;
-      a.src = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-      void a.play().then(function () {
-        a.pause();
-        a.muted = false;
-      });
-    },
-    { once: true, capture: true }
-  );
-}
+function bindDesktopMode(wrap: Element): () => void {
+  const ac = new AbortController();
+  const { signal } = ac;
 
-export function bindListeningShelf(wrap: Element): void {
   const root = wrap.querySelector('.listening-shelf-scroll');
-  if (!root) return;
+  if (!root) {
+    return () => {};
+  }
   const line = root.querySelector('.listening-track-line');
   const nowEl = root.querySelector('.listening-track-now');
-  if (!line || !nowEl) return;
+  if (!line || !nowEl) {
+    return () => {};
+  }
   const now = nowEl as HTMLElement;
   const arts = root.querySelectorAll<HTMLElement>('.album-art');
-  let peekTimer: ReturnType<typeof setTimeout> | null = null;
-  let audioTimer: ReturnType<typeof setTimeout> | null = null;
+  let peekTimer: number | null = null;
+  let audioTimer: number | null = null;
   let labelSettleTimer: number | null = null;
   let hovered: HTMLElement | null = null;
-  const audio = new Audio();
-  audio.preload = 'auto';
-  let lastPreviewUrl = '';
 
-  const stopPreview = () => {
-    lastPreviewUrl = '';
-    try {
-      audio.pause();
-      audio.removeAttribute('src');
-      audio.load();
-    } catch {
-      /* ignore */
-    }
-  };
-
-  const startPreview = (el: Element) => {
-    const url = el.getAttribute('data-preview-url') || '';
-    if (!url) {
-      stopPreview();
-      return;
-    }
-    if (lastPreviewUrl === url) {
-      audio.currentTime = 0;
-      void audio.play().catch(() => {});
-      return;
-    }
-    lastPreviewUrl = url;
-    try {
-      audio.pause();
-    } catch {
-      /* ignore */
-    }
-    audio.src = url;
-    void audio.load();
-    void audio.play().catch(function () {
-      // Often blocked until pointer unlock runs
-    });
-  };
+  installPreviewUnlockOnce();
+  const preview = createPreviewController();
 
   const placeLabel = (art: HTMLElement) => {
     if (!art || now.hasAttribute('hidden')) return;
@@ -98,7 +54,6 @@ export function bindListeningShelf(wrap: Element): void {
     const minCenterW = 120;
     const maxCenterW = Math.min(352, w - 2 * GUTTER);
 
-    // Avoid full `cssText` so we can keep `opacity` during the peek settle.
     now.style.setProperty('position', 'absolute');
     now.style.setProperty('top', '0');
     now.style.setProperty('z-index', '10');
@@ -196,55 +151,92 @@ export function bindListeningShelf(wrap: Element): void {
     }
   };
 
-  installUnlockOnce();
-
   for (const el of arts) {
     const art = el;
-    art.addEventListener('mouseenter', () => {
-      const i = Number(art.getAttribute('data-index'));
+    art.addEventListener(
+      'mouseenter',
+      () => {
+        const i = Number(art.getAttribute('data-index'));
+        if (peekTimer) clearTimeout(peekTimer);
+        if (audioTimer) clearTimeout(audioTimer);
+        audioTimer = null;
+        peekTimer = window.setTimeout(() => {
+          peekTimer = null;
+          for (const a of arts) a.classList.remove(PEEK_CLASS);
+          art.classList.add(PEEK_CLASS);
+          if (!Number.isNaN(i)) setPeerShift(i);
+          setNow(art);
+        }, PEEK_DELAY_MS);
+        audioTimer = window.setTimeout(() => {
+          audioTimer = null;
+          if (art.matches(':hover')) {
+            preview.start(art);
+          }
+        }, AUDIO_DELAY_MS);
+      },
+      { signal }
+    );
+    art.addEventListener('mouseleave', () => preview.stop(), { signal });
+    art.addEventListener(
+      'mousemove',
+      () => {
+        if (art.classList.contains(PEEK_CLASS)) placeLabel(art);
+      },
+      { signal }
+    );
+  }
+  root.addEventListener(
+    'mouseleave',
+    () => {
       if (peekTimer) clearTimeout(peekTimer);
+      peekTimer = null;
       if (audioTimer) clearTimeout(audioTimer);
       audioTimer = null;
-      peekTimer = setTimeout(() => {
-        peekTimer = null;
-        for (const a of arts) a.classList.remove(PEEK_CLASS);
-        art.classList.add(PEEK_CLASS);
-        if (!Number.isNaN(i)) setPeerShift(i);
-        setNow(art);
-      }, PEEK_DELAY_MS);
-      audioTimer = setTimeout(() => {
-        audioTimer = null;
-        if (art.matches(':hover')) {
-          startPreview(art);
-        }
-      }, AUDIO_DELAY_MS);
-    });
-    art.addEventListener('mouseleave', () => {
-      stopPreview();
-    });
-    art.addEventListener('mousemove', () => {
-      if (art.classList.contains(PEEK_CLASS)) placeLabel(art);
-    });
-  }
-  root.addEventListener('mouseleave', () => {
-    if (peekTimer) clearTimeout(peekTimer);
-    peekTimer = null;
-    if (audioTimer) clearTimeout(audioTimer);
-    audioTimer = null;
-    for (const a of arts) a.classList.remove(PEEK_CLASS);
-    clearPeerShift();
-    clearNow();
-    stopPreview();
-  });
-  window.addEventListener('resize', () => {
+      for (const a of arts) a.classList.remove(PEEK_CLASS);
+      clearPeerShift();
+      clearNow();
+      preview.stop();
+    },
+    { signal }
+  );
+  const onWinResize = () => {
     if (hovered) placeLabel(hovered);
-  });
+  };
+  window.addEventListener('resize', onWinResize, { signal });
+
+  return () => {
+    for (const a of arts) {
+      a.classList.remove(PEEK_CLASS);
+      a.style.removeProperty('--peer-shift');
+    }
+    clearNow();
+    preview.stop();
+    ac.abort();
+  };
+}
+
+export function bindListeningShelf(wrap: Element): void {
+  const mq = window.matchMedia(DESKTOP_MQ);
+  let destroy: (() => void) | undefined;
+
+  const run = () => {
+    destroy?.();
+    destroy = undefined;
+    if (mq.matches) {
+      destroy = bindDesktopMode(wrap);
+    } else {
+      destroy = bindMobileStack(wrap);
+    }
+  };
+
+  run();
+  mq.addEventListener('change', run);
 }
 
 export function initListeningShelves(): void {
-  document.querySelectorAll('[data-listening-shelf]').forEach((wrap) => {
+  document.querySelectorAll('[data-listening-shelf]').forEach((w) => {
     try {
-      bindListeningShelf(wrap);
+      bindListeningShelf(w);
     } catch {
       /* ignore per-shelf failures */
     }
