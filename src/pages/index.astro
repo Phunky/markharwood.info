@@ -3,18 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import ListeningShelf from '../components/ListeningShelf.astro';
 import { format } from 'date-fns';
 
-const values = [
-  'Hey!',
-  'Hello.',
-  'Hi!',
-  'Yo!',
-  'Sup!',
-  'Now then.',
-  'Yello!',
-  'Howdy!'
-]
-const welcome = values[Math.floor(Math.random() * values.length)]
-
 type PostEntry = {
   frontmatter: { slug: string; title: string; date: string };
 };
@@ -27,8 +15,24 @@ const posts = Object.values(
 	<main>
 		<div class="leading-relaxed tracking-tight text-indigo-900 subpixel-antialiased">
     <h1 class="mb-4 mt-2">
-      👋 { welcome } I'm Mark.
+      👋 <span data-home-welcome>Hello.</span> I'm Mark.
     </h1>
+    <script>
+      const WELCOMES = [
+        'Hey!',
+        'Hello.',
+        'Hi!',
+        'Yo!',
+        'Sup!',
+        'Now then.',
+        'Yello!',
+        'Howdy!',
+      ];
+      const el = document.querySelector('[data-home-welcome]');
+      if (el) {
+        el.textContent = WELCOMES[Math.floor(Math.random() * WELCOMES.length)] ?? 'Hello.';
+      }
+    </script>
 
     <p>For the last twenty years I have been building web applications, automating business processes and helping start-ups grow.</p>
     <p>

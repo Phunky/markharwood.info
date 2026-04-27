@@ -19,10 +19,10 @@ const {
   heading,
   whenEmpty = 'hide',
   lastfmUser: lastfmUserProp,
-  maxTracks = 16,
-  lastfmLimit = 24,
+  maxTracks = 12,
+  lastfmLimit = 12,
   enablePreviews = true,
-  itunesConcurrency = 4,
+  itunesConcurrency = 12,
 } = Astro.props;
 
 const lastfmUser = lastfmUserProp ?? (import.meta.env.PUBLIC_LASTFM_USER || 'irPhunky');
