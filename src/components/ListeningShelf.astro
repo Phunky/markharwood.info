@@ -32,7 +32,8 @@ const {
   itunesConcurrency,
 } = Astro.props;
 
-const lastfmUser = lastfmUserProp ?? import.meta.env.LASTFM_USER ?? 'irPhunky';
+const lastfmUser =
+  lastfmUserProp ?? (import.meta.env.LASTFM_USER || 'irPhunky');
 
 const covers = await fetchListeningCovers({
   lastfmUser,
