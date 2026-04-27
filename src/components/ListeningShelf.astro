@@ -48,7 +48,9 @@ function isPlaceholder(url: string): boolean {
   return PLACEHOLDER_MARKERS.some((m) => url.includes(m));
 }
 
-async function itunesArtwork(artist: string, track: string, album: string): Promise<string | null> {
+type ItunesHit = { artwork: string | null; preview: string | null };
+
+async function itunesFromSearch(artist: string, track: string, album: string): Promise<ItunesHit | null> {
   const term = [artist, track, album].filter(Boolean).join(' ').slice(0, 200);
   if (!term.trim()) return null;
   try {
@@ -58,16 +60,23 @@ async function itunesArtwork(artist: string, track: string, album: string): Prom
     u.searchParams.set('entity', 'song');
     const res = await fetch(u.toString(), { headers: { Accept: 'application/json' } });
     if (!res.ok) return null;
-    const data = (await res.json()) as { results?: Array<{ artworkUrl100?: string }> };
-    const art = data.results?.[0]?.artworkUrl100;
-    if (!art) return null;
-    return art.replace(/100x100bb\.jpg/i, '600x600bb.jpg');
+    const data = (await res.json()) as {
+      results?: Array<{ artworkUrl100?: string; previewUrl?: string }>;
+    };
+    const r = data.results?.[0];
+    if (!r) return null;
+    const artwork = r.artworkUrl100
+      ? r.artworkUrl100.replace(/100x100bb\.jpg/i, '600x600bb.jpg')
+      : null;
+    const preview =
+      typeof r.previewUrl === 'string' && r.previewUrl.length > 0 ? r.previewUrl : null;
+    return { artwork, preview };
   } catch {
     return null;
   }
 }
 
-type Cover = { src: string; alt: string; track: string; artist: string };
+type Cover = { src: string; alt: string; track: string; artist: string; previewUrl: string | null };
 
 export interface Props {
   class?: string;
@@ -109,13 +118,14 @@ try {
       const album = albumName(track);
       const alt = name ? `${name} — ${artist}` : artist;
 
-      if (isPlaceholder(src)) {
-        const fallback = await itunesArtwork(artist, name, album);
-        if (fallback) src = fallback;
+      const itunes = await itunesFromSearch(artist, name, album);
+      if (itunes) {
+        if (isPlaceholder(src) && itunes.artwork) src = itunes.artwork;
       }
+      const previewUrl = itunes?.preview ?? null;
 
       if (!src || isPlaceholder(src)) return null;
-      return { src, alt, track: name, artist };
+      return { src, alt, track: name, artist, previewUrl };
     })
   );
 
@@ -145,12 +155,15 @@ try {
                   data-index={String(i)}
                   data-track={cover.track || 'Unknown track'}
                   data-artist={cover.artist || 'Unknown artist'}
+                  data-preview-url={cover.previewUrl ?? undefined}
                   style={{
                     '--i': String(i),
                     zIndex: i + 1,
                   }}
                 >
-                  <img src={cover.src} alt={cover.alt} loading="lazy" decoding="async" />
+                  <div class="album-art-face">
+                    <img src={cover.src} alt={cover.alt} loading="lazy" decoding="async" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -187,14 +200,52 @@ try {
           const EDGE = 0.24;
           const GUTTER = 8;
           const PEEK_DELAY_MS = 55;
+          /** ~1 frame past peek: avoids noise on a very fast sweep without a long wait */
+          const AUDIO_DELAY_MS = 80;
           const PEEK_CLASS = 'album-art--peek';
           let peekTimer = null;
+          let audioTimer = null;
           let hovered = null;
+          const audio = new Audio();
+          audio.preload = 'auto';
+          let lastPreviewUrl = '';
+
+          const stopPreview = () => {
+            lastPreviewUrl = '';
+            try {
+              audio.pause();
+              audio.removeAttribute('src');
+              audio.load();
+            } catch (e) {}
+          };
+
+          const startPreview = (el) => {
+            const url = el.getAttribute('data-preview-url') || '';
+            if (!url) {
+              stopPreview();
+              return;
+            }
+            if (lastPreviewUrl === url) {
+              audio.currentTime = 0;
+              void audio.play().catch(() => {});
+              return;
+            }
+            lastPreviewUrl = url;
+            try {
+              audio.pause();
+            } catch (e) {}
+            audio.src = url;
+            void audio.load();
+            void audio.play().catch(function () {
+              // Often blocked until pointer unlock runs (see below)
+            });
+          };
 
           const placeLabel = (art) => {
             if (!art || now.hasAttribute('hidden')) return;
             const lineRect = line.getBoundingClientRect();
-            const artRect = art.getBoundingClientRect();
+            const vis = art.querySelector('img') || art;
+            const artRect = vis.getBoundingClientRect();
             const w = lineRect.width;
             if (w < 1) return;
             const cx = artRect.left - lineRect.left + artRect.width * 0.5;
@@ -276,10 +327,30 @@ try {
             }
           };
 
+          if (!window.__listeningShelfUnlockPlaced) {
+            window.__listeningShelfUnlockPlaced = true;
+            document.addEventListener(
+              'pointerdown',
+              function () {
+                const a = new Audio();
+                a.muted = true;
+                a.src =
+                  'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+                void a.play().then(function () {
+                  a.pause();
+                  a.muted = false;
+                });
+              },
+              { once: true, capture: true }
+            );
+          }
+
           for (const el of arts) {
             el.addEventListener('mouseenter', () => {
               const i = Number(el.getAttribute('data-index'));
               clearTimeout(peekTimer);
+              clearTimeout(audioTimer);
+              audioTimer = null;
               peekTimer = setTimeout(() => {
                 peekTimer = null;
                 for (const a of arts) a.classList.remove(PEEK_CLASS);
@@ -287,6 +358,15 @@ try {
                 if (!Number.isNaN(i)) setPeerShift(i);
                 setNow(el);
               }, PEEK_DELAY_MS);
+              audioTimer = setTimeout(() => {
+                audioTimer = null;
+                if (el.matches(':hover')) {
+                  startPreview(el);
+                }
+              }, AUDIO_DELAY_MS);
+            });
+            el.addEventListener('mouseleave', () => {
+              stopPreview();
             });
             el.addEventListener('mousemove', () => {
               if (el.classList.contains(PEEK_CLASS)) placeLabel(el);
@@ -304,9 +384,12 @@ try {
           root.addEventListener('mouseleave', () => {
             clearTimeout(peekTimer);
             peekTimer = null;
+            clearTimeout(audioTimer);
+            audioTimer = null;
             for (const a of arts) a.classList.remove(PEEK_CLASS);
             clearPeerShift();
             clearNow();
+            stopPreview();
           });
           window.addEventListener('resize', () => {
             if (hovered) placeLabel(hovered);
@@ -339,14 +422,27 @@ try {
     background: transparent;
   }
 
+  /* Outer shell stays the hit / layout box so peek transforms don’t drop hover / kill the 1s audio timer */
   .album-art {
-    @apply absolute top-0 cursor-pointer bg-transparent drop-shadow-md;
+    @apply absolute top-0 cursor-pointer bg-transparent;
     overflow: visible;
     left: calc(var(--i) * var(--step));
     width: var(--tile);
     height: var(--tile);
     margin: 0;
-    transform: translateX(var(--peer-shift, 0px)) rotate(0deg) scale(1);
+    transform: translateX(var(--peer-shift, 0px));
+    transform-origin: center center;
+    transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .album-art-face {
+    @apply h-full w-full drop-shadow-md;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(0deg) scale(1);
     transform-origin: center center;
     transition:
       transform 380ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -359,10 +455,13 @@ try {
   }
 
   .listening-shelf .album-art.album-art--peek {
-    @apply drop-shadow-lg;
     z-index: 60;
+  }
+
+  .listening-shelf .album-art.album-art--peek .album-art-face {
+    @apply drop-shadow-lg;
     top: -1.65rem;
-    transform: translateX(0) rotate(-11deg) scale(1.5);
+    transform: rotate(-11deg) scale(1.5);
   }
 
   .listening-track-line {
