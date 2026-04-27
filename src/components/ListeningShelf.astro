@@ -1,82 +1,5 @@
 ---
-/**
- * `user.getrecenttracks` returns per-track album art; weekly charts often only include the generic Last.fm placeholder.
- */
-const LASTFM_USER = 'irPhunky';
-const LASTFM_API_KEY = '3e434c7a4ee434d124cf935094da3c7e';
-const LASTFM_RECENT = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${LASTFM_USER}&api_key=${LASTFM_API_KEY}&format=json&limit=24`;
-
-const PLACEHOLDER_MARKERS = ['2a96cbd8b46e442fc41c2b86b821562f'];
-
-const sizeOrder: Record<string, number> = {
-  mega: 5,
-  extralarge: 4,
-  large: 3,
-  medium: 2,
-  small: 1,
-};
-
-function coverUrl(track: {
-  image?: Array<{ size?: string; '#text'?: string }> | { size?: string; '#text'?: string };
-}) {
-  const images = track?.image;
-  if (!images) return '';
-  const list = Array.isArray(images) ? images : [images];
-  const sorted = [...list].sort(
-    (a, b) => (sizeOrder[b?.size ?? ''] ?? 0) - (sizeOrder[a?.size ?? ''] ?? 0)
-  );
-  for (const im of sorted) {
-    const url = im?.['#text'] ?? '';
-    if (url) return url;
-  }
-  return '';
-}
-
-function artistName(track: { artist?: string | { '#text'?: string; name?: string } }) {
-  const a = track.artist;
-  if (typeof a === 'string') return a;
-  return a?.['#text'] ?? a?.name ?? '';
-}
-
-function albumName(track: Record<string, unknown>): string {
-  const al = track.album as { '#text'?: string } | undefined;
-  return al?.['#text'] ?? '';
-}
-
-function isPlaceholder(url: string): boolean {
-  if (!url) return true;
-  return PLACEHOLDER_MARKERS.some((m) => url.includes(m));
-}
-
-type ItunesHit = { artwork: string | null; preview: string | null };
-
-async function itunesFromSearch(artist: string, track: string, album: string): Promise<ItunesHit | null> {
-  const term = [artist, track, album].filter(Boolean).join(' ').slice(0, 200);
-  if (!term.trim()) return null;
-  try {
-    const u = new URL('https://itunes.apple.com/search');
-    u.searchParams.set('term', term);
-    u.searchParams.set('limit', '1');
-    u.searchParams.set('entity', 'song');
-    const res = await fetch(u.toString(), { headers: { Accept: 'application/json' } });
-    if (!res.ok) return null;
-    const data = (await res.json()) as {
-      results?: Array<{ artworkUrl100?: string; previewUrl?: string }>;
-    };
-    const r = data.results?.[0];
-    if (!r) return null;
-    const artwork = r.artworkUrl100
-      ? r.artworkUrl100.replace(/100x100bb\.jpg/i, '600x600bb.jpg')
-      : null;
-    const preview =
-      typeof r.previewUrl === 'string' && r.previewUrl.length > 0 ? r.previewUrl : null;
-    return { artwork, preview };
-  } catch {
-    return null;
-  }
-}
-
-type Cover = { src: string; alt: string; track: string; artist: string; previewUrl: string | null };
+import { fetchListeningCovers } from '../lib/listening-shelf/covers';
 
 export interface Props {
   class?: string;
@@ -84,55 +7,41 @@ export interface Props {
   heading?: string;
   /** When the API returns no art */
   whenEmpty?: 'hide' | 'message';
+  /** Last.fm user; if omitted, uses `import.meta.env.LASTFM_USER` or `irPhunky` */
+  lastfmUser?: string;
+  /**
+   * Optional override; if omitted, uses `import.meta.env.LASTFM_API_KEY` (set in `.env`; see `astro.config.mjs`).
+   */
+  lastfmApiKey?: string;
+  maxTracks?: number;
+  lastfmLimit?: number;
+  /** Fetches iTunes for previews; when false, skips iTunes if Last.fm art is real (faster) */
+  enablePreviews?: boolean;
+  itunesConcurrency?: number;
 }
 
-const { class: className, heading, whenEmpty = 'hide' } = Astro.props;
+const {
+  class: className,
+  heading,
+  whenEmpty = 'hide',
+  lastfmUser: lastfmUserProp,
+  lastfmApiKey,
+  maxTracks,
+  lastfmLimit,
+  enablePreviews,
+  itunesConcurrency,
+} = Astro.props;
 
-let covers: Cover[] = [];
+const lastfmUser = lastfmUserProp ?? import.meta.env.LASTFM_USER ?? 'irPhunky';
 
-try {
-  const res = await fetch(LASTFM_RECENT);
-  if (!res.ok) throw new Error(String(res.status));
-  const data = await res.json();
-  const raw = data?.recenttracks?.track;
-  const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
-
-  const seen = new Set<string>();
-  const unique: Record<string, unknown>[] = [];
-  for (const item of list) {
-    const t = item as Record<string, unknown>;
-    const nm = (t.name as string | undefined) ?? '';
-    const art = artistName(t as Parameters<typeof artistName>[0]);
-    const key = `${art.toLowerCase()}|${nm.toLowerCase()}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    unique.push(t);
-    if (unique.length >= 16) break;
-  }
-
-  const enriched = await Promise.all(
-    unique.map(async (track) => {
-      let src = coverUrl(track as Parameters<typeof coverUrl>[0]);
-      const artist = artistName(track as Parameters<typeof artistName>[0]);
-      const name = (track.name as string | undefined) ?? '';
-      const album = albumName(track);
-      const alt = name ? `${name} — ${artist}` : artist;
-
-      const itunes = await itunesFromSearch(artist, name, album);
-      if (itunes) {
-        if (isPlaceholder(src) && itunes.artwork) src = itunes.artwork;
-      }
-      const previewUrl = itunes?.preview ?? null;
-
-      if (!src || isPlaceholder(src)) return null;
-      return { src, alt, track: name, artist, previewUrl };
-    })
-  );
-
-  covers = enriched.filter((c): c is Cover => c !== null);
-} catch {
-  covers = [];
-}
+const covers = await fetchListeningCovers({
+  lastfmUser,
+  lastfmApiKey,
+  maxTracks,
+  lastfmLimit,
+  enablePreviews,
+  itunesConcurrency,
+});
 ---
 
 {
@@ -183,219 +92,13 @@ try {
 }
 {
   covers.length > 0 && (
-    <script is:inline>
-      document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('[data-listening-shelf]').forEach((wrap) => {
-          const root = wrap.querySelector('.listening-shelf-scroll');
-          if (!root) return;
-          const line = root.querySelector('.listening-track-line');
-          const now = root.querySelector('.listening-track-now');
-          if (!line || !now) return;
-          const arts = root.querySelectorAll('.album-art');
-          const peerNudgePx = (distance) => {
-            if (distance < 1) return 0;
-            const v = 24 * 0.56 ** (distance - 1);
-            return Math.max(0, Math.round(v));
-          };
-          const EDGE = 0.24;
-          const GUTTER = 8;
-          const PEEK_DELAY_MS = 55;
-          /** ~1 frame past peek: avoids noise on a very fast sweep without a long wait */
-          const AUDIO_DELAY_MS = 80;
-          const PEEK_CLASS = 'album-art--peek';
-          let peekTimer = null;
-          let audioTimer = null;
-          let hovered = null;
-          const audio = new Audio();
-          audio.preload = 'auto';
-          let lastPreviewUrl = '';
-
-          const stopPreview = () => {
-            lastPreviewUrl = '';
-            try {
-              audio.pause();
-              audio.removeAttribute('src');
-              audio.load();
-            } catch (e) {}
-          };
-
-          const startPreview = (el) => {
-            const url = el.getAttribute('data-preview-url') || '';
-            if (!url) {
-              stopPreview();
-              return;
-            }
-            if (lastPreviewUrl === url) {
-              audio.currentTime = 0;
-              void audio.play().catch(() => {});
-              return;
-            }
-            lastPreviewUrl = url;
-            try {
-              audio.pause();
-            } catch (e) {}
-            audio.src = url;
-            void audio.load();
-            void audio.play().catch(function () {
-              // Often blocked until pointer unlock runs (see below)
-            });
-          };
-
-          const placeLabel = (art) => {
-            if (!art || now.hasAttribute('hidden')) return;
-            const lineRect = line.getBoundingClientRect();
-            const vis = art.querySelector('img') || art;
-            const artRect = vis.getBoundingClientRect();
-            const w = lineRect.width;
-            if (w < 1) return;
-            const cx = artRect.left - lineRect.left + artRect.width * 0.5;
-            const t = cx / w;
-            const minCenterW = 120;
-            const maxCenterW = Math.min(352, w - 2 * GUTTER);
-
-            now.style.cssText = '';
-            now.style.position = 'absolute';
-            now.style.top = '0';
-            now.style.left = '';
-            now.style.right = 'auto';
-            now.style.zIndex = '10';
-            if (t < EDGE) {
-              const left = Math.max(0, artRect.left - lineRect.left);
-              now.style.left = left + 'px';
-              now.style.transform = 'none';
-              now.style.maxWidth = Math.max(minCenterW, w - left - GUTTER) + 'px';
-              now.style.textAlign = 'left';
-            } else if (t > 1 - EDGE) {
-              const r = Math.max(0, lineRect.right - artRect.right);
-              now.style.right = r + 'px';
-              now.style.left = 'auto';
-              now.style.transform = 'none';
-              const spaceLeft = artRect.right - lineRect.left - GUTTER;
-              now.style.maxWidth = Math.max(minCenterW, spaceLeft) + 'px';
-              now.style.textAlign = 'right';
-            } else {
-              now.style.left = cx + 'px';
-              now.style.transform = 'translateX(-50%)';
-              now.style.maxWidth = maxCenterW + 'px';
-              now.style.textAlign = 'center';
-            }
-          };
-
-          const setNow = (el) => {
-            hovered = el;
-            const track = el.getAttribute('data-track') || '';
-            const artist = el.getAttribute('data-artist') || '';
-            now.textContent = '';
-            const te = document.createElement('span');
-            te.className = 'listening-track-title';
-            te.textContent = track || 'Unknown track';
-            const ar = document.createElement('span');
-            ar.className = 'listening-track-artist';
-            ar.textContent = artist || 'Unknown artist';
-            now.append(te, ar);
-            now.removeAttribute('hidden');
-            placeLabel(el);
-            requestAnimationFrame(() => placeLabel(el));
-            requestAnimationFrame(() => requestAnimationFrame(() => placeLabel(el)));
-          };
-
-          const clearNow = () => {
-            hovered = null;
-            now.textContent = '';
-            now.setAttribute('hidden', '');
-            now.style.cssText = '';
-          };
-
-          const setPeerShift = (hoverIndex) => {
-            for (const el of arts) {
-              const i = Number(el.getAttribute('data-index'));
-              if (Number.isNaN(i)) continue;
-              if (i === hoverIndex) {
-                el.style.setProperty('--peer-shift', '0px');
-                continue;
-              }
-              const d = Math.abs(i - hoverIndex);
-              const px = peerNudgePx(d);
-              const signed = i < hoverIndex ? -px : px;
-              el.style.setProperty('--peer-shift', `${signed}px`);
-            }
-          };
-
-          const clearPeerShift = () => {
-            for (const el of arts) {
-              el.style.removeProperty('--peer-shift');
-            }
-          };
-
-          if (!window.__listeningShelfUnlockPlaced) {
-            window.__listeningShelfUnlockPlaced = true;
-            document.addEventListener(
-              'pointerdown',
-              function () {
-                const a = new Audio();
-                a.muted = true;
-                a.src =
-                  'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
-                void a.play().then(function () {
-                  a.pause();
-                  a.muted = false;
-                });
-              },
-              { once: true, capture: true }
-            );
-          }
-
-          for (const el of arts) {
-            el.addEventListener('mouseenter', () => {
-              const i = Number(el.getAttribute('data-index'));
-              clearTimeout(peekTimer);
-              clearTimeout(audioTimer);
-              audioTimer = null;
-              peekTimer = setTimeout(() => {
-                peekTimer = null;
-                for (const a of arts) a.classList.remove(PEEK_CLASS);
-                el.classList.add(PEEK_CLASS);
-                if (!Number.isNaN(i)) setPeerShift(i);
-                setNow(el);
-              }, PEEK_DELAY_MS);
-              audioTimer = setTimeout(() => {
-                audioTimer = null;
-                if (el.matches(':hover')) {
-                  startPreview(el);
-                }
-              }, AUDIO_DELAY_MS);
-            });
-            el.addEventListener('mouseleave', () => {
-              stopPreview();
-            });
-            el.addEventListener('mousemove', () => {
-              if (el.classList.contains(PEEK_CLASS)) placeLabel(el);
-            });
-            el.addEventListener('transitionend', (e) => {
-              if (
-                hovered === el &&
-                el.classList.contains(PEEK_CLASS) &&
-                (e.propertyName === 'transform' || e.propertyName === 'top')
-              ) {
-                placeLabel(el);
-              }
-            });
-          }
-          root.addEventListener('mouseleave', () => {
-            clearTimeout(peekTimer);
-            peekTimer = null;
-            clearTimeout(audioTimer);
-            audioTimer = null;
-            for (const a of arts) a.classList.remove(PEEK_CLASS);
-            clearPeerShift();
-            clearNow();
-            stopPreview();
-          });
-          window.addEventListener('resize', () => {
-            if (hovered) placeLabel(hovered);
-          });
-        });
-      });
+    <script>
+      import { initListeningShelves } from '../lib/listening-shelf/attach-behavior';
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initListeningShelves);
+      } else {
+        initListeningShelves();
+      }
     </script>
   )
 }
