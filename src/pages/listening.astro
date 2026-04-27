@@ -147,11 +147,11 @@ try {
   @reference "tailwindcss";
 
   /*
-    Tall hovers: give the row room so scale(1.5) + lift stay inside the box. No horizontal scroll
-    — the shelf width is capped to the content column; tile + overlap scale down to fit.
+    No min-height: the block shrinks to the row. (Inner shelf still sets height: var(--tile) so
+    absolute-positioned covers have a non-zero box — that is the art height, not extra whitespace.)
   */
   .listening-shelf-scroll {
-    @apply flex w-full min-w-0 min-h-80 items-center overflow-x-visible overflow-y-visible;
+    @apply w-full min-w-0 overflow-x-visible overflow-y-visible;
     container-type: inline-size;
   }
 
@@ -163,6 +163,7 @@ try {
     --tile: min(8rem, calc(200cqi / (var(--count) + 1)));
     --step: calc(0.5 * var(--tile));
     position: relative;
+    /* Row height: one cover height (covers are position:absolute; this reserves layout space) */
     height: var(--tile);
     width: min(
       100%,
