@@ -12,6 +12,8 @@ const GUTTER = 8;
 const PEEK_DELAY_MS = 55;
 /** ~1 frame past peek: avoids noise on a very fast sweep without a long wait */
 const AUDIO_DELAY_MS = 80;
+/** Past `.album-art-face` / peer `transform` transitions (380ms) so the first label position matches the final layout */
+const PEEK_SETTLE_MS = 400;
 const PEEK_CLASS = 'album-art--peek';
 
 function installUnlockOnce(): void {
@@ -43,6 +45,7 @@ function bindShelf(wrap: Element): void {
   const arts = root.querySelectorAll<HTMLElement>('.album-art');
   let peekTimer: ReturnType<typeof setTimeout> | null = null;
   let audioTimer: ReturnType<typeof setTimeout> | null = null;
+  let labelSettleTimer: number | null = null;
   let hovered: HTMLElement | null = null;
   const audio = new Audio();
   audio.preload = 'auto';
@@ -95,35 +98,42 @@ function bindShelf(wrap: Element): void {
     const minCenterW = 120;
     const maxCenterW = Math.min(352, w - 2 * GUTTER);
 
-    now.style.cssText = '';
-    now.style.position = 'absolute';
-    now.style.top = '0';
-    now.style.left = '';
-    now.style.right = 'auto';
-    now.style.zIndex = '10';
+    // Avoid full `cssText` so we can keep `opacity` during the peek settle.
+    now.style.setProperty('position', 'absolute');
+    now.style.setProperty('top', '0');
+    now.style.setProperty('z-index', '10');
+    now.style.removeProperty('left');
+    now.style.removeProperty('right');
+    now.style.removeProperty('transform');
+    now.style.removeProperty('max-width');
+    now.style.removeProperty('text-align');
     if (t < EDGE) {
       const left = Math.max(0, artRect.left - lineRect.left);
-      now.style.left = `${left}px`;
-      now.style.transform = 'none';
-      now.style.maxWidth = `${Math.max(minCenterW, w - left - GUTTER)}px`;
-      now.style.textAlign = 'left';
+      now.style.setProperty('left', `${left}px`);
+      now.style.setProperty('transform', 'none');
+      now.style.setProperty('max-width', `${Math.max(minCenterW, w - left - GUTTER)}px`);
+      now.style.setProperty('text-align', 'left');
     } else if (t > 1 - EDGE) {
       const r = Math.max(0, lineRect.right - artRect.right);
-      now.style.right = `${r}px`;
-      now.style.left = 'auto';
-      now.style.transform = 'none';
+      now.style.setProperty('right', `${r}px`);
+      now.style.setProperty('left', 'auto');
+      now.style.setProperty('transform', 'none');
       const spaceLeft = artRect.right - lineRect.left - GUTTER;
-      now.style.maxWidth = `${Math.max(minCenterW, spaceLeft)}px`;
-      now.style.textAlign = 'right';
+      now.style.setProperty('max-width', `${Math.max(minCenterW, spaceLeft)}px`);
+      now.style.setProperty('text-align', 'right');
     } else {
-      now.style.left = `${cx}px`;
-      now.style.transform = 'translateX(-50%)';
-      now.style.maxWidth = `${maxCenterW}px`;
-      now.style.textAlign = 'center';
+      now.style.setProperty('left', `${cx}px`);
+      now.style.setProperty('transform', 'translateX(-50%)');
+      now.style.setProperty('max-width', `${maxCenterW}px`);
+      now.style.setProperty('text-align', 'center');
     }
   };
 
   const setNow = (el: HTMLElement) => {
+    if (labelSettleTimer) {
+      clearTimeout(labelSettleTimer);
+      labelSettleTimer = null;
+    }
     hovered = el;
     const track = el.getAttribute('data-track') || '';
     const artist = el.getAttribute('data-artist') || '';
@@ -136,12 +146,29 @@ function bindShelf(wrap: Element): void {
     ar.textContent = artist || 'Unknown artist';
     now.append(te, ar);
     now.removeAttribute('hidden');
-    placeLabel(el);
-    requestAnimationFrame(() => placeLabel(el));
-    requestAnimationFrame(() => requestAnimationFrame(() => placeLabel(el)));
+    now.style.setProperty('opacity', '0');
+    const showLabel = () => {
+      requestAnimationFrame(() => {
+        if (hovered !== el || !el.classList.contains(PEEK_CLASS)) return;
+        placeLabel(el);
+        now.style.removeProperty('opacity');
+      });
+    };
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      showLabel();
+    } else {
+      labelSettleTimer = window.setTimeout(() => {
+        labelSettleTimer = null;
+        showLabel();
+      }, PEEK_SETTLE_MS);
+    }
   };
 
   const clearNow = () => {
+    if (labelSettleTimer) {
+      clearTimeout(labelSettleTimer);
+      labelSettleTimer = null;
+    }
     hovered = null;
     now.textContent = '';
     now.setAttribute('hidden', '');
@@ -197,15 +224,6 @@ function bindShelf(wrap: Element): void {
     });
     art.addEventListener('mousemove', () => {
       if (art.classList.contains(PEEK_CLASS)) placeLabel(art);
-    });
-    art.addEventListener('transitionend', (e) => {
-      if (
-        hovered === art &&
-        art.classList.contains(PEEK_CLASS) &&
-        (e.propertyName === 'transform' || e.propertyName === 'top')
-      ) {
-        placeLabel(art);
-      }
     });
   }
   root.addEventListener('mouseleave', () => {

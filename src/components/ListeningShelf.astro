@@ -173,11 +173,7 @@ const covers = await fetchListeningCovers({
 
   .listening-track-now {
     @apply text-sm text-indigo-900;
-    transition:
-      left 0.1s ease-out,
-      right 0.1s ease-out,
-      transform 0.1s ease-out,
-      max-width 0.1s ease-out;
+    /* No transition: JS repositions often; animating left/transform made titles drift after hover */
   }
 
   .listening-track-now[hidden] {
