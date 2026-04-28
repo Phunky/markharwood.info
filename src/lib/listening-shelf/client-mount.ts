@@ -19,7 +19,6 @@ function buildShelfScroll(covers: ListeningCover[]): HTMLElement {
       art.setAttribute('data-preview-url', cover.previewUrl);
     }
     art.style.setProperty('--i', String(i));
-    art.style.zIndex = String(i + 1);
     const face = document.createElement('div');
     face.className = 'album-art-face';
     const img = document.createElement('img');

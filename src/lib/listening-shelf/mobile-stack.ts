@@ -31,7 +31,7 @@ function reapplyBaseAlbumArtFromDataIndex(el: HTMLElement) {
   const i = parseInt(raw, 10);
   if (Number.isNaN(i)) return;
   el.style.setProperty('--i', String(i));
-  el.style.setProperty('z-index', String(i + 1));
+  el.style.removeProperty('z-index');
 }
 
 function prepareArtForMobileStack(el: HTMLElement) {

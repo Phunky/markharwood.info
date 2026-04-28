@@ -209,6 +209,7 @@ export async function fetchListeningCovers(options: FetchListeningCoversOptions)
     const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
 
     const seen = new Set<string>();
+    /** Last.fm returns most-recent-first; preserve so index 0 is latest (leftmost, on top in desktop fan). */
     const unique: Record<string, unknown>[] = [];
     for (const item of list) {
       const t = item as Record<string, unknown>;

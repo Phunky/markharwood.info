@@ -21,18 +21,73 @@ export function placeTrackLineForViewport(wrap: Element, stacked: boolean): void
   scroll.insertBefore(line, nextAfterShelf);
 }
 
-function peerNudgePx(distance: number): number {
-  if (distance < 1) return 0;
-  const v = 24 * 0.56 ** (distance - 1);
-  return Math.max(0, Math.round(v));
-}
-
 const EDGE = 0.24;
 const GUTTER = 8;
 const PEEK_DELAY_MS = 55;
 const AUDIO_DELAY_MS = 80;
 const PEEK_SETTLE_MS = 400;
 const PEEK_CLASS = 'album-art--peek';
+
+/**
+ * Interior tiles (not first/last) shift away from the hovered one; ends stay fixed (transform only).
+ * Nearest indices move most: shift ∝ step/|Δi| so gap 1 dominates, farther interiors move less.
+ */
+const PEER_SEP_FR = 0.88;
+
+function dataIndex(el: HTMLElement): number {
+  const v = el.getAttribute('data-index');
+  const n = v == null ? NaN : parseInt(v, 10);
+  return Number.isFinite(n) ? n : 0;
+}
+
+/** Resolved CSS step between tile anchors (fallback: half resolved --tile). */
+function readShelfStepPx(shelf: HTMLElement): number {
+  const cs = getComputedStyle(shelf);
+  const stepRaw = cs.getPropertyValue('--step').trim();
+  let n = parseFloat(stepRaw);
+  if (Number.isFinite(n) && n > 0) {
+    return n;
+  }
+  const tileRaw = cs.getPropertyValue('--tile').trim();
+  n = parseFloat(tileRaw);
+  if (Number.isFinite(n) && n > 0) {
+    return n * 0.5;
+  }
+  return 48;
+}
+
+function setPeerShift(hoveredArt: HTMLElement, allArts: Iterable<HTMLElement>): void {
+  const shelf = hoveredArt.closest('.listening-shelf');
+  if (!(shelf instanceof HTMLElement)) {
+    return;
+  }
+  const stepPx = readShelfStepPx(shelf);
+  const h = dataIndex(hoveredArt);
+  const peers = [...allArts];
+  const count = peers.length;
+  const last = count - 1;
+
+  for (const el of peers) {
+    const i = dataIndex(el);
+    if (i === h) {
+      el.style.removeProperty('--peer-shift');
+      continue;
+    }
+    /* First and last cover stay pinned; only interior indices move */
+    if (i === 0 || i === last) {
+      el.style.removeProperty('--peer-shift');
+      continue;
+    }
+    const gaps = Math.abs(h - i);
+    const shiftPx = Math.round((PEER_SEP_FR * stepPx) / gaps);
+    if (shiftPx < 1) {
+      el.style.removeProperty('--peer-shift');
+    } else {
+      const dir = i < h ? -1 : 1;
+      el.style.setProperty('--peer-shift', `${dir * shiftPx}px`);
+    }
+  }
+}
 
 function bindDesktopMode(wrap: Element): () => void {
   const ac = new AbortController();
@@ -145,21 +200,6 @@ function bindDesktopMode(wrap: Element): () => void {
     now.style.cssText = '';
   };
 
-  const setPeerShift = (hoverIndex: number) => {
-    for (const el of arts) {
-      const i = Number(el.getAttribute('data-index'));
-      if (Number.isNaN(i)) continue;
-      if (i === hoverIndex) {
-        el.style.setProperty('--peer-shift', '0px');
-        continue;
-      }
-      const d = Math.abs(i - hoverIndex);
-      const px = peerNudgePx(d);
-      const signed = i < hoverIndex ? -px : px;
-      el.style.setProperty('--peer-shift', `${signed}px`);
-    }
-  };
-
   const clearPeerShift = () => {
     for (const el of arts) {
       el.style.removeProperty('--peer-shift');
@@ -171,7 +211,6 @@ function bindDesktopMode(wrap: Element): () => void {
     art.addEventListener(
       'mouseenter',
       () => {
-        const i = Number(art.getAttribute('data-index'));
         if (peekTimer) clearTimeout(peekTimer);
         if (audioTimer) clearTimeout(audioTimer);
         audioTimer = null;
@@ -179,8 +218,13 @@ function bindDesktopMode(wrap: Element): () => void {
           peekTimer = null;
           for (const a of arts) a.classList.remove(PEEK_CLASS);
           art.classList.add(PEEK_CLASS);
-          if (!Number.isNaN(i)) setPeerShift(i);
+          setPeerShift(art, arts);
           setNow(art);
+          requestAnimationFrame(() => {
+            if (hovered === art && art.classList.contains(PEEK_CLASS)) {
+              placeLabel(art);
+            }
+          });
         }, PEEK_DELAY_MS);
         audioTimer = window.setTimeout(() => {
           audioTimer = null;
@@ -215,7 +259,10 @@ function bindDesktopMode(wrap: Element): () => void {
     { signal }
   );
   const onWinResize = () => {
-    if (hovered) placeLabel(hovered);
+    if (hovered && hovered.classList.contains(PEEK_CLASS)) {
+      setPeerShift(hovered, arts);
+      placeLabel(hovered);
+    }
   };
   window.addEventListener('resize', onWinResize, { signal });
 
