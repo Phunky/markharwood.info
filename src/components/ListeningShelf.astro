@@ -93,47 +93,78 @@ const hasApiKey = Boolean(
     background: transparent;
   }
 
-  /* Stacked deck on narrow viewports (see mobile-stack.ts) */
-  @media (max-width: 767px) {
-    .listening-shelf--stack {
-      /* Use the scroll track width; tile scales up with the viewport */
-      --stack-tile: min(17rem, min(94cqi, 92vw));
-      width: 100%;
-      max-width: 100%;
-      min-height: calc(var(--stack-tile) * 1.48 + 4.5rem);
-      height: auto;
-      padding-bottom: 0.5rem;
-      touch-action: pan-y;
-    }
+  /* Narrow / stacked variant only (≤767px binds `listening-shelf--stack` in TS; desktop stays row hover) */
+  .listening-shelf--stack {
+    --stack-tile: min(17rem, min(94cqi, min(92vw, 22rem)));
+    width: 100%;
+    max-width: 100%;
+    /* Tile + room for rotated corners; overlay sits on art, not below */
+    min-height: calc(var(--stack-tile) + 3rem);
+    height: auto;
+    padding-bottom: 0.5rem;
+    touch-action: pan-y;
+  }
 
-    .listening-shelf--stack .album-art {
-      width: var(--stack-tile);
-      height: var(--stack-tile);
-      top: 0.25rem;
-      overflow: visible;
-    }
+  .listening-shelf--stack .album-art {
+    width: var(--stack-tile);
+    height: var(--stack-tile);
+    top: 0.25rem;
+    overflow: visible;
+  }
 
-    .listening-shelf--stack .album-art--stack-top {
-      touch-action: manipulation;
-    }
+  .listening-shelf--stack .album-art--stack-top {
+    touch-action: none;
+  }
 
-    .listening-shelf--stack .album-art img {
-      -webkit-touch-callout: none;
-      user-select: none;
-    }
+  .listening-shelf--stack .album-art img {
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+    user-select: none;
+    pointer-events: none;
+  }
 
-    .listening-shelf--stack + .listening-track-line .listening-track-now {
-      position: static;
-      max-width: 100%;
-      transform: none;
-      text-align: center;
-      left: auto;
-      right: auto;
-    }
+  /* Shrinks to label; rotates with artwork via JS (same angle as stack) */
+  .listening-shelf--stack .listening-track-line {
+    position: absolute;
+    left: 50%;
+    top: calc(0.25rem + var(--stack-tile, 17rem) * 0.5);
+    width: max-content;
+    max-width: calc(var(--stack-tile, 17rem) - 1rem);
+    min-height: unset;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    pointer-events: none;
+    z-index: 70;
+  }
 
-    .listening-shelf-scroll:has(.listening-shelf--stack) {
-      gap: 0.5rem;
-    }
+  .listening-shelf--stack .listening-track-line .listening-track-now {
+    position: relative;
+    display: inline-block;
+    max-width: calc(var(--stack-tile, 17rem) - 1rem);
+    vertical-align: top;
+    text-align: center;
+    padding: 0.85rem 1.15rem;
+    border-radius: 0.5rem;
+    background: rgb(255 255 255 / 0.58);
+    color: rgb(30 27 75);
+    box-shadow: 0 2px 14px rgb(0 0 0 / 0.1);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+    left: auto;
+    right: auto;
+  }
+
+  .listening-shelf--stack .listening-track-line .listening-track-title {
+    color: rgb(30 27 75);
+  }
+
+  .listening-shelf--stack .listening-track-line .listening-track-artist {
+    color: rgb(75 85 99);
+  }
+
+  .listening-shelf-scroll:has(.listening-shelf--stack) {
+    gap: 1rem;
   }
 
   /* Outer shell stays the hit / layout box so peek transforms don’t drop hover / kill the 1s audio timer */

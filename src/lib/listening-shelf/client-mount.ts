@@ -25,6 +25,7 @@ function buildShelfScroll(covers: ListeningCover[]): HTMLElement {
     const img = document.createElement('img');
     img.src = cover.src;
     img.alt = cover.alt;
+    img.draggable = false;
     img.loading = 'lazy';
     img.decoding = 'async';
     face.appendChild(img);
@@ -40,8 +41,8 @@ function buildShelfScroll(covers: ListeningCover[]): HTMLElement {
   now.setAttribute('aria-live', 'polite');
   now.setAttribute('hidden', '');
   line.appendChild(now);
+  shelf.appendChild(line);
   scroll.appendChild(shelf);
-  scroll.appendChild(line);
 
   return scroll;
 }

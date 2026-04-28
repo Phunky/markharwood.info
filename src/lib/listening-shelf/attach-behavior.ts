@@ -1,10 +1,25 @@
 /**
- * Interactions for the listening shelf. Desktop: hover + peek. Mobile: see `mobile-stack.ts`.
+ * Listening shelf UX: horizontal row + hover/peek at ≥768px; stacked deck below (`mobile-stack.ts`).
  */
 import { bindMobileStack } from './mobile-stack';
 import { createPreviewController, installPreviewUnlockOnce } from './preview-audio';
 
 const DESKTOP_MQ = '(min-width: 768px)';
+
+/** Row layout expects track line outside the shelf; stack overlay anchors it inside. */
+export function placeTrackLineForViewport(wrap: Element, stacked: boolean): void {
+  const scroll = wrap.querySelector('.listening-shelf-scroll');
+  const shelf = scroll?.querySelector('.listening-shelf');
+  const line = scroll?.querySelector('.listening-track-line');
+  if (!scroll || !shelf || !line) return;
+  if (stacked) {
+    shelf.appendChild(line);
+    return;
+  }
+  const nextAfterShelf = shelf.nextSibling;
+  if (nextAfterShelf === line) return;
+  scroll.insertBefore(line, nextAfterShelf);
+}
 
 function peerNudgePx(distance: number): number {
   if (distance < 1) return 0;
@@ -223,8 +238,10 @@ export function bindListeningShelf(wrap: Element): void {
     destroy?.();
     destroy = undefined;
     if (mq.matches) {
+      placeTrackLineForViewport(wrap, false);
       destroy = bindDesktopMode(wrap);
     } else {
+      placeTrackLineForViewport(wrap, true);
       destroy = bindMobileStack(wrap);
     }
   };
