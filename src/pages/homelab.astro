@@ -1,0 +1,179 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { format } from 'date-fns';
+import { gitLastCommitIsoForPath } from '../lib/git-last-commit';
+
+const updatedIso =
+  import.meta.env.PUBLIC_HOMELAB_LAST_UPDATED?.trim() ||
+  gitLastCommitIsoForPath('src/pages/homelab.astro');
+
+const lastUpdatedLabel = updatedIso
+  ? format(new Date(updatedIso), 'EEEE, do MMMM yyyy')
+  : null;
+---
+
+<Layout title="Homelab | Mark Harwood">
+  <main>
+    <h1>
+      Homelab
+    </h1>
+    <h6>
+      A snapshot of the hardware and self-hosted software running at home.
+    </h6>
+    <p>
+      This website is hosted on my homelab, along with many other services and things I like to tinker with.
+    </p>
+    <hr class="mb-4">
+
+    <h2>Hardware</h2>
+    <ul>
+      <li>
+        <strong><a href="https://store.minisforum.uk/products/795s7" target="_blank">MINISFORUM 795S7</a></strong>
+        <p>64GB RAM and 2x1.5TB NVMe drives. This is the main compute box, running <a href="https://www.proxmox.com/en/" target="_blank">Proxmox</a> for virtual machines, containers and the services that benefit from fast local storage.</p>
+      </li>
+      <li>
+        <strong><a href="https://www.synology.com/en-uk/products/DS423+" target="_blank">Synology DS423+</a></strong>
+        <p>18GB RAM, 2x1TB NVMe, 2x16TB HDD and 2x18TB HDD. This handles bulk storage, media workflows, downloads and anything that wants reliable disk space more than raw compute.</p>
+      </li>
+      <li>
+        <strong><a href="https://firewalla.com/products/firewalla-gold-plus" target="_blank">Firewalla Gold Plus</a></strong>
+        <p>The edge router for the network, handling routing, firewalling and visibility over what is happening on the LAN.</p>
+      </li>
+      <li>
+        <strong><a href="https://vimintech.com/products/26-port-2-5g-poe-switch-unmanaged-24-2-5g-base-t-poe-ports-2-10gbps-sfp-24-port-poe-switch-w-60gbps-ethernet-switching-capacity-support-ieee802-3af-at-65w-vlan-metal-housing-fanless" target="_blank">VIMIN 26 Port 2.5G PoE Switch</a></strong>
+        <p>The core switch for wired devices and PoE-powered gear, keeping the lab, access points and smart home panels connected.</p>
+      </li>
+      <li>
+        <strong><a href="https://sonoff.tech/product/central-control-panel/nspanel-pro/" target="_blank">Sonoff NSPanel Pro</a></strong>
+        <p>A wall-mounted <a href="https://www.home-assistant.io/" target="_blank">Home Assistant</a> dashboard for quick access to common smart home controls.</p>
+      </li>
+    </ul>
+
+    <h2>Software</h2>
+    <ul>
+      <li>
+        <strong><a href="https://caddyserver.com/" target="_blank">Caddy</a></strong>
+        <p>Hosted on Proxmox. Reverse proxy and automatic HTTPS in front of internal services.</p>
+      </li>
+      <li>
+        <strong><a href="https://n8n.io/" target="_blank">n8n</a></strong>
+        <p>Hosted on Proxmox. Workflow automation for gluing APIs, notifications and routine tasks together.</p>
+      </li>
+      <li>
+        <strong><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a></strong>
+        <p>Hosted on Proxmox. Relational database service for apps that need a dependable datastore.</p>
+      </li>
+      <li>
+        <strong><a href="https://valkey.io/" target="_blank">Valkey</a></strong>
+        <p>Hosted on Proxmox. Redis-compatible cache and queue backend for services that need fast ephemeral storage.</p>
+      </li>
+      <li>
+        <strong><a href="https://garagehq.deuxfleurs.fr/" target="_blank">Garage</a></strong>
+        <p>Hosted on Proxmox. S3-compatible object storage for backups, files and app storage experiments.</p>
+      </li>
+      <li>
+        <strong><a href="https://www.navidrome.org/" target="_blank">Navidrome</a></strong>
+        <p>Hosted on Proxmox. Lightweight music streaming for the local music library.</p>
+      </li>
+      <li>
+        <strong><a href="https://emby.media/" target="_blank">Emby</a></strong>
+        <p>Hosted on Proxmox. Media server for browsing and streaming video content around the house.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/m3ue/m3u-editor" target="_blank">M3U Editor</a></strong>
+        <p>Hosted on Proxmox. Playlist management for keeping M3U sources tidy and usable.</p>
+      </li>
+      <li>
+        <strong><a href="https://www.home-assistant.io/" target="_blank">Home Assistant</a></strong>
+        <p>Hosted on Proxmox. Smart home hub for automations, dashboards and device integrations.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/louislam/dockge" target="_blank">Dockge</a></strong>
+        <p>Hosted on Proxmox. Docker Compose stack management used to host this website and other websites.</p>
+      </li>
+      <li>
+        <strong><a href="https://radarr.video/" target="_blank">Radarr</a></strong>
+        <p>Hosted on Synology. Movie library management and automation.</p>
+      </li>
+      <li>
+        <strong><a href="https://sonarr.tv/" target="_blank">Sonarr</a></strong>
+        <p>Hosted on Synology. TV series library management and automation.</p>
+      </li>
+      <li>
+        <strong><a href="https://lidarr.audio/" target="_blank">Lidarr</a></strong>
+        <p>Hosted on Synology. Music library management and automation.</p>
+      </li>
+      <li>
+        <strong><a href="https://prowlarr.com/" target="_blank">Prowlarr</a></strong>
+        <p>Hosted on Synology. Indexer management for the media automation stack.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/Dictionarry-Hub/profilarr" target="_blank">Profilarr</a></strong>
+        <p>Hosted on Synology. Configuration management for Radarr and Sonarr profiles.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/TheWicklowWolf/Lidify" target="_blank">Lidify</a></strong>
+        <p>Hosted on Synology. Music discovery tool that helps find new artists based on the Lidarr library.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/M0VENTURA/sptnr/tree/develop" target="_blank">SPTNR</a></strong>
+        <p>Hosted on Synology. Navidrome music library management, ratings and metadata enrichment.</p>
+      </li>
+      <li>
+        <strong><a href="https://www.qbittorrent.org/" target="_blank">qBittorrent</a></strong>
+        <p>Hosted on Synology. Torrent client used by the media automation workflow.</p>
+      </li>
+      <li>
+        <strong><a href="https://sabnzbd.org/" target="_blank">SABnzbd</a></strong>
+        <p>Hosted on Synology. Usenet downloader used alongside the media automation tools.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/slskd/slskd" target="_blank">slskd</a></strong>
+        <p>Hosted on Synology. Soulseek client for music discovery and downloads.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/ManiMatter/decluttarr" target="_blank">Decluttarr</a></strong>
+        <p>Hosted on Synology. Watches media automation queues and clears stalled or no-longer-needed downloads.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/unpackerr/unpackerr" target="_blank">Unpackerr</a></strong>
+        <p>Hosted on Synology. Extracts completed downloads so the media automation tools can import them cleanly.</p>
+      </li>
+      <li>
+        <strong><a href="https://seerr.dev/" target="_blank">Seerr</a></strong>
+        <p>Hosted on Synology. Request management for the media stack, giving the household a friendlier way to ask for things.</p>
+      </li>
+      <li>
+        <strong><a href="https://github.com/qdm12/gluetun" target="_blank">Gluetun</a></strong>
+        <p>Hosted on Synology. VPN client container used to route selected download traffic through a VPN.</p>
+      </li>
+    </ul>
+
+    <hr class="mt-8 mb-4" />
+    {lastUpdatedLabel && (
+      <h6>
+        Last updated: {lastUpdatedLabel}
+      </h6>
+    )}
+  </main>
+</Layout>
+
+<style>
+  @reference "tailwindcss";
+
+  ul {
+    @apply list-inside list-disc mb-4;
+  }
+
+  h2 {
+    @apply mt-8;
+  }
+
+  li {
+    @apply mb-4;
+  }
+
+  li p {
+    @apply mt-1 mb-0;
+  }
+</style>
