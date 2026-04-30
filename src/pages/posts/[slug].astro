@@ -1,24 +1,19 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { getPostBySlug, getPostStaticPaths } from '../../lib/posts';
 
 export async function getStaticPaths() {
-  const modules = import.meta.glob('../../posts/**/*.md', { eager: true });
-  return Object.values(modules).map((mod: { frontmatter: { slug: string } }) => ({
-    params: { slug: mod.frontmatter.slug },
-  }));
+  return getPostStaticPaths();
 }
 
-const modules = import.meta.glob('../../posts/**/*.md', { eager: true });
 const { slug } = Astro.params;
-const mod = Object.values(modules).find(
-  (m: { frontmatter: { slug: string } }) => m.frontmatter.slug === slug
-);
-if (!mod) {
+const post = getPostBySlug(slug);
+if (!post) {
   throw new Error(`Missing post: ${slug}`);
 }
-const { Content } = mod as { Content: (props?: Record<string, unknown>) => unknown };
+const { Content, frontmatter } = post;
 ---
 
-<Layout title="Welcome to Astro.">
+<Layout title={`${frontmatter.title} | Mark Harwood`}>
   <Content />
 </Layout>

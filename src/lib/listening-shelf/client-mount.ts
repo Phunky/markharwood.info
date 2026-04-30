@@ -1,5 +1,14 @@
 import { bindListeningShelf } from './attach-behavior';
+import { LISTENING_SHELF_DEFAULTS } from './config';
 import { fetchListeningCovers, type ListeningCover } from './covers';
+
+const listeningShelfTeardowns = new WeakMap<Element, () => void>();
+
+function logListeningShelfError(message: string, error: unknown): void {
+  if (import.meta.env.DEV) {
+    console.warn(`[ListeningShelf] ${message}`, error);
+  }
+}
 
 function buildShelfScroll(covers: ListeningCover[]): HTMLElement {
   const scroll = document.createElement('div');
@@ -25,7 +34,7 @@ function buildShelfScroll(covers: ListeningCover[]): HTMLElement {
     img.src = cover.src;
     img.alt = cover.alt;
     img.draggable = false;
-    img.loading = 'lazy';
+    img.loading = i === 0 ? 'eager' : 'lazy';
     img.decoding = 'async';
     face.appendChild(img);
     art.appendChild(face);
@@ -66,9 +75,13 @@ export async function mountListeningShelves(): Promise<void> {
     const status = wrap.querySelector<HTMLElement>('[data-shelf-status]');
     const whenEmpty = wrap.getAttribute('data-when-empty') || 'hide';
     const lastfmUser = wrap.getAttribute('data-lastfm-user') || 'irPhunky';
-    const maxTracks = parseIntAttr(wrap, 'data-max-tracks', 16);
-    const lastfmLimit = parseIntAttr(wrap, 'data-lastfm-limit', 24);
-    const itunesConcurrency = parseIntAttr(wrap, 'data-itunes-concurrency', 4);
+    const maxTracks = parseIntAttr(wrap, 'data-max-tracks', LISTENING_SHELF_DEFAULTS.maxTracks);
+    const lastfmLimit = parseIntAttr(wrap, 'data-lastfm-limit', LISTENING_SHELF_DEFAULTS.lastfmLimit);
+    const itunesConcurrency = parseIntAttr(
+      wrap,
+      'data-itunes-concurrency',
+      LISTENING_SHELF_DEFAULTS.itunesConcurrency
+    );
     const enablePreviews = wrap.getAttribute('data-enable-previews') !== 'false';
 
     const key = (import.meta.env.PUBLIC_LASTFM_API_KEY as string) || '';
@@ -96,7 +109,8 @@ export async function mountListeningShelves(): Promise<void> {
         enablePreviews,
         itunesConcurrency,
       });
-    } catch {
+    } catch (error) {
+      logListeningShelfError('Unable to fetch recent tracks.', error);
       covers = [];
     }
 
@@ -119,9 +133,17 @@ export async function mountListeningShelves(): Promise<void> {
     wrap.appendChild(scroll);
     wrap.dataset.shelfMounted = '1';
     try {
-      bindListeningShelf(wrap);
-    } catch {
-      /* ignore */
+      listeningShelfTeardowns.set(wrap, bindListeningShelf(wrap));
+    } catch (error) {
+      logListeningShelfError('Unable to bind shelf interactions.', error);
     }
   }
+}
+
+export function unmountListeningShelves(): void {
+  document.querySelectorAll<HTMLElement>('[data-listening-shelf]').forEach((wrap) => {
+    listeningShelfTeardowns.get(wrap)?.();
+    listeningShelfTeardowns.delete(wrap);
+    delete wrap.dataset.shelfMounted;
+  });
 }

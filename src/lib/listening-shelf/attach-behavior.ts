@@ -277,7 +277,7 @@ function bindDesktopMode(wrap: Element): () => void {
   };
 }
 
-export function bindListeningShelf(wrap: Element): void {
+export function bindListeningShelf(wrap: Element): () => void {
   const mq = window.matchMedia(DESKTOP_MQ);
   let destroy: (() => void) | undefined;
 
@@ -295,14 +295,10 @@ export function bindListeningShelf(wrap: Element): void {
 
   run();
   mq.addEventListener('change', run);
-}
 
-export function initListeningShelves(): void {
-  document.querySelectorAll('[data-listening-shelf]').forEach((w) => {
-    try {
-      bindListeningShelf(w);
-    } catch {
-      /* ignore per-shelf failures */
-    }
-  });
+  return () => {
+    mq.removeEventListener('change', run);
+    destroy?.();
+    destroy = undefined;
+  };
 }

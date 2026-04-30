@@ -12,53 +12,51 @@ const lastUpdatedLabel = updatedIso
   : null;
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-		<h1>
-      Uses
-    </h1>
+<Layout title="Uses | Mark Harwood">
+  <h1>
+    Uses
+  </h1>
+  <h6>
+    This is my <a href="https://uses.tech/" target="_blank">/uses</a> page, be sure to checkout what other people use over at <a href="https://uses.tech/" target="_blank">uses.tech</a>.
+  </h6>
+  <p>I'd like to say that people often reach out and ask me what I use on a daily basis but they don't 🤪 but i'm sharing them with you anyway.</p>
+  <hr class="mb-4">
+  <h2>Hardware</h2>
+  <ul>
+    <li>
+      I run everything from my <a href="https://www.apple.com/uk/macbook-pro/" target="_blank">M3 MacBook Pro</a>.
+    </li>
+    <li>
+      I use an <a href="https://www.apple.com/uk/ipad-pro/" target="_blank">iPad Pro</a> as secondary screen.
+    </li>
+    <li>
+      Current mobile of choice is an <a href="https://www.apple.com/uk/iphone-air/" target="_blank">iPhone Air</a>.
+    </li>
+  </ul>
+  <h2>Software</h2>
+  <ul>
+    <li>
+      Ever since I switched to MacOS I've leaned heavily on <a href="https://www.alfredapp.com/" target="_blank">Alfred App</a>.
+    </li>
+    <li>
+      <a href="https://manytricks.com/moom/" target="_blank">Moom</a> is my window manager of choice.
+    </li>
+    <li>
+      My editor of choice these days is <a href="https://cursor.com/" target="_blank">Cursor</a> with the <a href="https://marketplace.visualstudio.com/items?itemName=mischah.relaxed-theme" target="_blank">Relaxed Theme</a>.
+    </li>
+    <li>
+      <a href="https://iterm2.com/" target="_blank">iTerm2</a> is my go to terminal emulator again with the <a href="https://github.com/Relaxed-Theme/relaxed-terminal-themes" target="_blank">Relaxed theme</a>.
+    </li>
+    <li>
+      My shell of choice is <a href="https://fishshell.com/">Fish</a>.
+    </li>
+  </ul>
+  <hr class="mt-8 mb-4" />
+  {lastUpdatedLabel && (
     <h6>
-      This is my <a href="https://uses.tech/" target="_blank">/uses</a> page, be sure to checkout what other people use over at <a href="https://uses.tech/" target="_blank">uses.tech</a>.
+      Last updated: {lastUpdatedLabel}
     </h6>
-    <p>I'd like to say that people often reach out and ask me what I use on a daily basis but they don't 🤪 but i'm sharing them with you anyway.</p>
-    <hr class="mb-4">
-    <h2>Hardware</h2>
-    <ul>
-      <li>
-        I run everything from my <a href="https://www.apple.com/uk/macbook-pro/" target="_blank">M3 MacBook Pro</a>.
-      </li>
-      <li>
-        I use an <a href="https://www.apple.com/uk/ipad-pro/" target="_blank">iPad Pro</a> as secondary screen.
-      </li>
-      <li>
-        Current mobile of choice is an <a href="https://www.apple.com/uk/iphone-air/" target="_blank">iPhone Air</a>.
-      </li>
-    </ul>
-    <h2>Software</h2>
-    <ul>
-      <li>
-        Ever since I switched to MacOS I've leaned heavily on <a href="https://www.alfredapp.com/" target="_blank">Alfred App</a>.
-      </li>
-      <li>
-        <a href="https://manytricks.com/moom/" target="_blank">Moom</a> is my window manager of choice.
-      </li>
-      <li>
-        My editor of choice these days is <a href="https://cursor.com/" target="_blank">Cursor</a> with the <a href="https://marketplace.visualstudio.com/items?itemName=mischah.relaxed-theme" target="_blank">Relaxed Theme</a>.
-      </li>
-      <li>
-        <a href="https://iterm2.com/" target="_blank">iTerm2</a> is my go to terminal emulator again with the <a href="https://github.com/Relaxed-Theme/relaxed-terminal-themes" target="_blank">Relaxed theme</a>.
-      </li>
-      <li>
-        My shell of choice is <a href="https://fishshell.com/">Fish</a>.
-      </li>
-    </ul>
-    <hr class="mt-8 mb-4" />
-    {lastUpdatedLabel && (
-      <h6>
-        Last updated: {lastUpdatedLabel}
-      </h6>
-    )}
-	</main>
+  )}
 </Layout>
 
 <style>

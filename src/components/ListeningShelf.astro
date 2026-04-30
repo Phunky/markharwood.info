@@ -1,4 +1,6 @@
 ---
+import { LISTENING_SHELF_DEFAULTS } from '../lib/listening-shelf/config';
+
 export interface Props {
   class?: string;
   /** e.g. "Recently listening" — omit to render no title */
@@ -19,10 +21,10 @@ const {
   heading,
   whenEmpty = 'hide',
   lastfmUser: lastfmUserProp,
-  maxTracks = 12,
-  lastfmLimit = 12,
+  maxTracks = LISTENING_SHELF_DEFAULTS.maxTracks,
+  lastfmLimit = LISTENING_SHELF_DEFAULTS.lastfmLimit,
   enablePreviews = true,
-  itunesConcurrency = 12,
+  itunesConcurrency = LISTENING_SHELF_DEFAULTS.itunesConcurrency,
 } = Astro.props;
 
 const lastfmUser = lastfmUserProp ?? (import.meta.env.PUBLIC_LASTFM_USER || 'irPhunky');

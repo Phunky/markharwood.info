@@ -12,27 +12,25 @@ const lastUpdatedLabel = updatedIso
   : null;
 ---
 
-<Layout title="Welcome to Astro.">
-	<main>
-    <h1>
-      What I'm doing right now.
-    </h1>
+<Layout title="Now | Mark Harwood">
+  <h1>
+    What I'm doing right now.
+  </h1>
+  <h6>
+    This is my <a href="https://nownownow.com/about" target="_blank">nownownow</a> page, I'm going to do my best to keep this updated but can't promise anything.
+  </h6>
+  <hr class="mb-4">
+  <p>As predicted this page hasn't been touched since it was launched almost year ago... So I'll keep this short.</p>
+  <h2>Manifesting</h2>
+  <ul class="list-disc list-inside">
+    <li>Setting up a home lab...</li>
+  </ul>
+  <hr class="mt-8 mb-4">
+  {lastUpdatedLabel && (
     <h6>
-      This is my <a href="https://nownownow.com/about" target="_blank">nownownow</a> page, I'm going to do my best to keep this updated but can't promise anything.
+      Last updated: {lastUpdatedLabel}
     </h6>
-    <hr class="mb-4">
-    <p>As predicted this page hasn't been touched since it was launched almost year ago... So I'll keep this short.</p>
-    <h2>Manifesting</h2>
-    <ul class="list-disc list-inside">
-      <li>Setting up a home lab...</li>
-    </ul>
-    <hr class="mt-8 mb-4">
-    {lastUpdatedLabel && (
-      <h6>
-        Last updated: {lastUpdatedLabel}
-      </h6>
-    )}
-	</main>
+  )}
 </Layout>
 
 <style>

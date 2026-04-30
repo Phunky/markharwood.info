@@ -1,0 +1,29 @@
+---
+import { format } from 'date-fns';
+import type { PostSummary } from '../lib/posts';
+
+export interface Props {
+  posts: PostSummary[];
+  class?: string;
+}
+
+const { posts, class: className } = Astro.props;
+---
+
+<div class:list={[className]}>
+  {posts.map((post) => (
+    <>
+      <h6 class="m-0">
+        {format(new Date(post.date), 'EEEE, do MMMM yyyy')}
+      </h6>
+      <h3>
+        <a
+          href={`/posts/${post.slug}`}
+          class="font-bold underline"
+        >
+          {post.title}
+        </a>
+      </h3>
+    </>
+  ))}
+</div>

@@ -1,3 +1,5 @@
+import { LISTENING_SHELF_DEFAULTS } from './config';
+
 /**
  * `user.getrecenttracks` returns per-track album art; weekly charts often only include the generic Last.fm placeholder.
  */
@@ -187,10 +189,10 @@ export async function fetchListeningCovers(options: FetchListeningCoversOptions)
   const {
     lastfmUser,
     lastfmApiKey: keyProp,
-    maxTracks = 16,
-    lastfmLimit = 24,
+    maxTracks = LISTENING_SHELF_DEFAULTS.maxTracks,
+    lastfmLimit = LISTENING_SHELF_DEFAULTS.lastfmLimit,
     enablePreviews = true,
-    itunesConcurrency = 4,
+    itunesConcurrency = LISTENING_SHELF_DEFAULTS.itunesConcurrency,
     signal,
   } = options;
 
