@@ -1,11 +1,5 @@
 import { createPreviewController, installPreviewUnlockOnce } from './preview-audio';
-
-/** Movement past this marks an intentional gesture (not hold jitter cleanup). */
-const MOVE_CANCEL_PX = 14;
-/** How many cards are stacked at once (deeper in the list stay hidden until you advance). */
-const MAX_IN_PILE = 6;
-/** Drag → release distance past this (px) cycles the top card (see CodePen shuffle deck). */
-const THROW_DISTANCE_RATIO = 1;
+import type { ListeningShelfConfig } from './config';
 
 /** Inline props set in `applyPile` (incl. `!important`); must not nuke --i / z-index from `buildShelfScroll` or desktop returns broken. */
 const MOBILE_PILE_STYLE_PROPS = [
@@ -50,11 +44,11 @@ function resetArtForDesktopRow(el: HTMLElement) {
   reapplyBaseAlbumArtFromDataIndex(el);
 }
 
-/** Stable “random” tilt per card index (CodePen uses roughly −10°…10°). */
-function stackRotationDegrees(i: number): number {
+/** Stable “random” tilt per card index. */
+function stackRotationDegrees(i: number, maxRotationDeg: number): number {
   const s = Math.imul(i, 1103515245) + 12345;
   const u = ((s >>> 0) % 10001) / 10000;
-  return -10 + u * 20;
+  return -maxRotationDeg + u * maxRotationDeg * 2;
 }
 
 function useHoverDeckPreview(): boolean {
@@ -64,7 +58,7 @@ function useHoverDeckPreview(): boolean {
 /**
  * Stacked deck (shuffle drag + throw). Title/artist overlay + preview only on hover (fine pointer) or touch.
  */
-export function bindMobileStack(wrap: Element): () => void {
+export function bindMobileStack(wrap: Element, config: ListeningShelfConfig): () => void {
   const root = wrap.querySelector('.listening-shelf-scroll');
   if (!root) return () => {};
   const shelf = root.querySelector('.listening-shelf');
@@ -85,7 +79,7 @@ export function bindMobileStack(wrap: Element): () => void {
   const { signal } = ac;
 
   installPreviewUnlockOnce();
-  const preview = createPreviewController();
+  const preview = createPreviewController(config.audio.volume);
 
   shelf.classList.add('listening-shelf--stack');
 
@@ -124,7 +118,7 @@ export function bindMobileStack(wrap: Element): () => void {
       lineEl.style.removeProperty('transition');
       return;
     }
-    const tiltDeg = stackRotationDegrees(active);
+    const tiltDeg = stackRotationDegrees(active, config.stack.rotationDeg);
     lineEl.style.setProperty(
       'transform',
       `translateX(calc(-50% + ${dragDx.toFixed(1)}px)) translateY(calc(-50% + ${dragDy.toFixed(1)}px)) rotate(${tiltDeg.toFixed(2)}deg)`,
@@ -197,7 +191,7 @@ export function bindMobileStack(wrap: Element): () => void {
     for (let i = 0; i < n; i++) {
       const el = arts[i]!;
       const depth = (i - active + n) % n;
-      if (depth >= MAX_IN_PILE) {
+      if (depth >= config.stack.maxVisible) {
         el.classList.remove('album-art--stack-top');
         el.style.setProperty('visibility', 'hidden', 'important');
         el.style.setProperty('pointer-events', 'none', 'important');
@@ -208,8 +202,8 @@ export function bindMobileStack(wrap: Element): () => void {
         el.style.setProperty('transition', `transform ${tDur} ${ease}, visibility 0.15s linear`, 'important');
         continue;
       }
-      const rot = stackRotationDegrees(i);
-      const zIndex = 50 + MAX_IN_PILE - depth;
+      const rot = stackRotationDegrees(i, config.stack.rotationDeg);
+      const zIndex = 50 + config.stack.maxVisible - depth;
       el.classList.toggle('album-art--stack-top', depth === 0);
       el.style.setProperty('visibility', 'visible', 'important');
       el.style.setProperty('pointer-events', depth === 0 ? 'auto' : 'none', 'important');
@@ -274,7 +268,11 @@ export function bindMobileStack(wrap: Element): () => void {
     const dy = e.clientY - startY;
     const dist0 = Math.hypot(dx, dy);
 
-    if (dist0 >= MOVE_CANCEL_PX || Math.abs(dx) > MOVE_CANCEL_PX || Math.abs(dy) > MOVE_CANCEL_PX) {
+    if (
+      dist0 >= config.stack.moveCancelPx ||
+      Math.abs(dx) > config.stack.moveCancelPx ||
+      Math.abs(dy) > config.stack.moveCancelPx
+    ) {
       if (!moved) {
         moved = true;
       }
@@ -300,7 +298,7 @@ export function bindMobileStack(wrap: Element): () => void {
       const art = arts[active];
       const dist = Math.hypot(dragDx, dragDy);
       const w = art?.getBoundingClientRect().width ?? 1;
-      if (dist > w * THROW_DISTANCE_RATIO) {
+      if (dist > w * config.stack.throwDistanceRatio) {
         active = (active + 1) % n;
       }
       dragDx = 0;

@@ -1,5 +1,13 @@
 ---
-import { LISTENING_SHELF_DEFAULTS } from '../lib/listening-shelf/config';
+import {
+  LISTENING_SHELF_DEFAULTS,
+  resolveListeningShelfConfig,
+  type ListeningShelfAudioConfig,
+  type ListeningShelfHoverConfig,
+  type ListeningShelfLayout,
+  type ListeningShelfStackConfig,
+  type ListeningShelfVisualConfig,
+} from '../lib/listening-shelf/config';
 
 export interface Props {
   class?: string;
@@ -14,6 +22,12 @@ export interface Props {
   /** Fetches iTunes for previews; when false, skips iTunes if Last.fm art is real (faster) */
   enablePreviews?: boolean;
   itunesConcurrency?: number;
+  layout?: ListeningShelfLayout;
+  breakpoint?: string;
+  visual?: Partial<ListeningShelfVisualConfig>;
+  hover?: Partial<ListeningShelfHoverConfig>;
+  audio?: Partial<ListeningShelfAudioConfig>;
+  stack?: Partial<ListeningShelfStackConfig>;
 }
 
 const {
@@ -25,12 +39,38 @@ const {
   lastfmLimit = LISTENING_SHELF_DEFAULTS.lastfmLimit,
   enablePreviews = true,
   itunesConcurrency = LISTENING_SHELF_DEFAULTS.itunesConcurrency,
+  layout,
+  breakpoint,
+  visual,
+  hover,
+  audio,
+  stack,
 } = Astro.props;
 
 const lastfmUser = lastfmUserProp ?? (import.meta.env.PUBLIC_LASTFM_USER || 'irPhunky');
 const hasApiKey = Boolean(
   import.meta.env.PUBLIC_LASTFM_API_KEY && import.meta.env.PUBLIC_LASTFM_API_KEY.length > 0
 );
+const config = resolveListeningShelfConfig({
+  maxTracks,
+  lastfmLimit,
+  itunesConcurrency,
+  layout,
+  breakpoint,
+  visual,
+  hover,
+  audio,
+  stack,
+});
+const rootStyle = [
+  `--listening-tile-size: ${config.visual.tileSize}`,
+  `--listening-step-factor: ${config.visual.overlap}`,
+  `--listening-gap: ${config.visual.gap}`,
+  `--listening-stack-tile: ${config.visual.stackTileSize}`,
+  `--listening-label-max: ${config.visual.labelMaxWidth}`,
+  `--listening-peek-scale: ${config.hover.scale}`,
+  `--listening-peek-rotation: ${config.hover.rotationDeg}deg`,
+].join('; ');
 ---
 
 {
@@ -42,10 +82,9 @@ const hasApiKey = Boolean(
       data-listening-shelf
       data-when-empty={whenEmpty}
       data-lastfm-user={lastfmUser}
-      data-max-tracks={String(maxTracks)}
-      data-lastfm-limit={String(lastfmLimit)}
-      data-itunes-concurrency={String(itunesConcurrency)}
+      data-listening-config={JSON.stringify(config)}
       data-enable-previews={enablePreviews ? 'true' : 'false'}
+      style={rootStyle}
     >
       {heading && (
         <h2 class="mb-4 mt-0 text-2xl font-bold text-indigo-900">
@@ -79,27 +118,28 @@ const hasApiKey = Boolean(
     overflow: visible;
   }
 
-  .listening-shelf-scroll {
-    @apply flex w-full min-w-0 flex-col gap-8 overflow-x-visible overflow-y-visible bg-transparent;
+  .listening-shelf-root .listening-shelf-scroll {
+    @apply flex w-full min-w-0 flex-col overflow-x-visible overflow-y-visible bg-transparent;
+    gap: var(--listening-gap, 2rem);
     container-type: inline-size;
   }
 
   /* Desktop fan: keep overflow visible so rotate/scale peek isn’t clipped (overflow-x: clip cut corners) */
-  .listening-shelf-scroll:has(.listening-shelf:not(.listening-shelf--stack)) {
+  .listening-shelf-root .listening-shelf-scroll:has(.listening-shelf--fan) {
     overflow: visible;
     padding-top: min(0.75rem, 3cqi);
     padding-inline: min(0.85rem, 3.5cqi);
   }
 
-  .listening-shelf {
-    --tile: min(8rem, calc(200cqi / (var(--count) + 1)));
-    --step: calc(0.5 * var(--tile));
+  .listening-shelf-root .listening-shelf {
+    --tile: var(--listening-tile-size, min(8rem, calc(200cqi / (var(--count) + 1))));
+    --step: calc(var(--listening-step-factor, 0.5) * var(--tile));
     position: relative;
     height: var(--tile);
-    /* Fixed footprint: step = 0.5×tile — peers move via --peer-shift on hover, not wider layout */
+    /* Fixed footprint: peers move via --peer-shift on hover, not wider layout */
     width: min(
       100%,
-      calc((var(--count) + 1) * 0.5 * var(--tile))
+      calc((var(--count) + 1) * var(--listening-step-factor, 0.5) * var(--tile))
     );
     max-width: 100%;
     margin-inline: auto;
@@ -108,8 +148,8 @@ const hasApiKey = Boolean(
   }
 
   /* Narrow / stacked variant (≤767px binds `listening-shelf--stack` in TS) */
-  .listening-shelf--stack {
-    --stack-tile: min(17rem, min(94cqi, min(92vw, 22rem)));
+  .listening-shelf-root .listening-shelf--stack {
+    --stack-tile: var(--listening-stack-tile, min(17rem, min(94cqi, min(92vw, 22rem))));
     width: 100%;
     max-width: 100%;
     /* Tile + room below art; avoid calc(var(--stack-tile) + X) — postcss chokes on nested min() */
@@ -119,18 +159,18 @@ const hasApiKey = Boolean(
     touch-action: pan-y;
   }
 
-  .listening-shelf--stack .album-art {
+  .listening-shelf-root .listening-shelf--stack .album-art {
     width: var(--stack-tile);
     height: var(--stack-tile);
     top: 0.25rem;
     overflow: visible;
   }
 
-  .listening-shelf--stack .album-art--stack-top {
+  .listening-shelf-root .listening-shelf--stack .album-art--stack-top {
     touch-action: none;
   }
 
-  .listening-shelf--stack .album-art img {
+  .listening-shelf-root .listening-shelf--stack .album-art img {
     -webkit-touch-callout: none;
     -webkit-user-drag: none;
     user-drag: none;
@@ -139,13 +179,13 @@ const hasApiKey = Boolean(
   }
 
   /* Shrinks to label; rotates with artwork via JS (same angle as stack) */
-  .listening-shelf--stack .listening-track-line {
+  .listening-shelf-root .listening-shelf--stack .listening-track-line {
     position: absolute;
     left: 50%;
     /* ~half tile + art offset; literals only so postcss-calc does not expand --stack-tile */
     top: calc(0.25rem + min(8.5rem, min(47cqi, 46vw)));
     width: max-content;
-    max-width: min(16rem, calc(100% - 1rem));
+    max-width: min(var(--listening-label-max, 16rem), calc(100% - 1rem));
     min-height: unset;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -153,10 +193,10 @@ const hasApiKey = Boolean(
     z-index: 70;
   }
 
-  .listening-shelf--stack .listening-track-line .listening-track-now {
+  .listening-shelf-root .listening-shelf--stack .listening-track-line .listening-track-now {
     position: relative;
     display: inline-block;
-    max-width: min(16rem, calc(100% - 1rem));
+    max-width: min(var(--listening-label-max, 16rem), calc(100% - 1rem));
     vertical-align: top;
     text-align: center;
     padding: 0.85rem 1.15rem;
@@ -170,26 +210,41 @@ const hasApiKey = Boolean(
     right: auto;
   }
 
-  .listening-shelf--stack .listening-track-line .listening-track-title {
+  .listening-shelf-root .listening-shelf--stack .listening-track-line .listening-track-title {
     color: rgb(30 27 75);
   }
 
-  .listening-shelf--stack .listening-track-line .listening-track-artist {
+  .listening-shelf-root .listening-shelf--stack .listening-track-line .listening-track-artist {
     color: rgb(75 85 99);
   }
 
-  .listening-shelf-scroll:has(.listening-shelf--stack) {
-    gap: 1rem;
+  .listening-shelf-root .listening-shelf-scroll:has(.listening-shelf--stack) {
+    gap: min(1rem, var(--listening-gap, 2rem));
+  }
+
+  .listening-shelf-root .listening-shelf--row {
+    @apply flex flex-wrap items-start justify-center;
+    gap: var(--listening-gap, 2rem);
+    width: 100%;
+    height: auto;
+  }
+
+  .listening-shelf-root .listening-shelf--row .album-art {
+    position: relative;
+    left: auto;
+    top: auto;
+    flex: 0 0 var(--tile);
+    z-index: auto;
   }
 
   /* Horizontal fan: overlap L→R; smaller index = further left = higher z, so each cover stays under the one to its left (incl. while peeking — no z-boost) */
-  .listening-shelf:not(.listening-shelf--stack) .album-art {
+  .listening-shelf-root .listening-shelf--fan .album-art {
     z-index: calc(var(--count) + 1 - var(--i));
     transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Outer shell stays the hit / layout box so peek transforms don’t drop hover / kill the 1s audio timer */
-  .album-art {
+  .listening-shelf-root .album-art {
     @apply absolute top-0 cursor-pointer bg-transparent;
     overflow: visible;
     left: calc(var(--i) * var(--step));
@@ -201,7 +256,7 @@ const hasApiKey = Boolean(
     transition: transform 380ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .album-art-face {
+  .listening-shelf-root .album-art-face {
     @apply h-full w-full drop-shadow-md;
     position: absolute;
     left: 0;
@@ -216,36 +271,36 @@ const hasApiKey = Boolean(
       top 380ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .album-art img {
+  .listening-shelf-root .album-art img {
     @apply block h-full w-full rounded-lg object-cover bg-transparent;
   }
 
   /* Peek: center-anchored scale + rotate on face; peers shift via --peer-shift (attach-behavior.ts) */
-  .listening-shelf .album-art.album-art--peek .album-art-face {
+  .listening-shelf-root .listening-shelf .album-art.album-art--peek .album-art-face {
     @apply drop-shadow-lg;
     top: 0;
-    transform: rotate(8deg) scale(1.28);
+    transform: rotate(var(--listening-peek-rotation, 8deg)) scale(var(--listening-peek-scale, 1.28));
     transform-origin: center center;
   }
 
-  .listening-track-line {
+  .listening-shelf-root .listening-track-line {
     @apply relative w-full min-h-14 shrink-0;
   }
 
-  .listening-track-now {
+  .listening-shelf-root .listening-track-now {
     @apply text-sm text-indigo-900;
     /* No transition: JS repositions often; animating left/transform made titles drift after hover */
   }
 
-  .listening-track-now[hidden] {
+  .listening-shelf-root .listening-track-now[hidden] {
     display: none;
   }
 
-  .listening-track-now .listening-track-title {
+  .listening-shelf-root .listening-track-now .listening-track-title {
     @apply block font-medium;
   }
 
-  .listening-track-now .listening-track-artist {
+  .listening-shelf-root .listening-track-now .listening-track-artist {
     @apply block text-gray-600;
   }
 </style>

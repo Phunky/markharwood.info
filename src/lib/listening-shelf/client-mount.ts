@@ -1,5 +1,10 @@
 import { bindListeningShelf } from './attach-behavior';
-import { LISTENING_SHELF_DEFAULTS } from './config';
+import {
+  LISTENING_SHELF_DEFAULTS,
+  resolveListeningShelfConfig,
+  type ListeningShelfConfig,
+  type ListeningShelfConfigInput,
+} from './config';
 import { fetchListeningCovers, type ListeningCover } from './covers';
 
 const listeningShelfTeardowns = new WeakMap<Element, () => void>();
@@ -62,6 +67,27 @@ function parseIntAttr(el: Element, name: string, fallback: number): number {
   return Number.isFinite(n) ? n : fallback;
 }
 
+function parseListeningConfig(el: Element): ListeningShelfConfig {
+  const raw = el.getAttribute('data-listening-config');
+  if (!raw) {
+    return resolveListeningShelfConfig({
+      maxTracks: parseIntAttr(el, 'data-max-tracks', LISTENING_SHELF_DEFAULTS.maxTracks),
+      lastfmLimit: parseIntAttr(el, 'data-lastfm-limit', LISTENING_SHELF_DEFAULTS.lastfmLimit),
+      itunesConcurrency: parseIntAttr(
+        el,
+        'data-itunes-concurrency',
+        LISTENING_SHELF_DEFAULTS.itunesConcurrency
+      ),
+    });
+  }
+  try {
+    return resolveListeningShelfConfig(JSON.parse(raw) as ListeningShelfConfigInput);
+  } catch (error) {
+    logListeningShelfError('Unable to parse shelf configuration.', error);
+    return resolveListeningShelfConfig();
+  }
+}
+
 /**
  * Fetches recent tracks in the browser and injects the shelf, then wires hover/ preview behavior.
  * Call once when the DOM (and `data-listening-shelf` root) is ready.
@@ -75,13 +101,7 @@ export async function mountListeningShelves(): Promise<void> {
     const status = wrap.querySelector<HTMLElement>('[data-shelf-status]');
     const whenEmpty = wrap.getAttribute('data-when-empty') || 'hide';
     const lastfmUser = wrap.getAttribute('data-lastfm-user') || 'irPhunky';
-    const maxTracks = parseIntAttr(wrap, 'data-max-tracks', LISTENING_SHELF_DEFAULTS.maxTracks);
-    const lastfmLimit = parseIntAttr(wrap, 'data-lastfm-limit', LISTENING_SHELF_DEFAULTS.lastfmLimit);
-    const itunesConcurrency = parseIntAttr(
-      wrap,
-      'data-itunes-concurrency',
-      LISTENING_SHELF_DEFAULTS.itunesConcurrency
-    );
+    const config = parseListeningConfig(wrap);
     const enablePreviews = wrap.getAttribute('data-enable-previews') !== 'false';
 
     const key = (import.meta.env.PUBLIC_LASTFM_API_KEY as string) || '';
@@ -104,10 +124,10 @@ export async function mountListeningShelves(): Promise<void> {
       covers = await fetchListeningCovers({
         lastfmUser,
         lastfmApiKey: key,
-        maxTracks,
-        lastfmLimit,
+        maxTracks: config.maxTracks,
+        lastfmLimit: config.lastfmLimit,
         enablePreviews,
-        itunesConcurrency,
+        itunesConcurrency: config.itunesConcurrency,
       });
     } catch (error) {
       logListeningShelfError('Unable to fetch recent tracks.', error);
@@ -133,7 +153,7 @@ export async function mountListeningShelves(): Promise<void> {
     wrap.appendChild(scroll);
     wrap.dataset.shelfMounted = '1';
     try {
-      listeningShelfTeardowns.set(wrap, bindListeningShelf(wrap));
+      listeningShelfTeardowns.set(wrap, bindListeningShelf(wrap, config));
     } catch (error) {
       logListeningShelfError('Unable to bind shelf interactions.', error);
     }

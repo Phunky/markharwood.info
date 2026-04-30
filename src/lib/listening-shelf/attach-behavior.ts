@@ -3,8 +3,7 @@
  */
 import { bindMobileStack } from './mobile-stack';
 import { createPreviewController, installPreviewUnlockOnce } from './preview-audio';
-
-const DESKTOP_MQ = '(min-width: 768px)';
+import type { ListeningShelfConfig } from './config';
 
 /** Row layout expects track line outside the shelf; stack overlay anchors it inside. */
 export function placeTrackLineForViewport(wrap: Element, stacked: boolean): void {
@@ -23,16 +22,7 @@ export function placeTrackLineForViewport(wrap: Element, stacked: boolean): void
 
 const EDGE = 0.24;
 const GUTTER = 8;
-const PEEK_DELAY_MS = 55;
-const AUDIO_DELAY_MS = 80;
-const PEEK_SETTLE_MS = 400;
 const PEEK_CLASS = 'album-art--peek';
-
-/**
- * Interior tiles (not first/last) shift away from the hovered one; ends stay fixed (transform only).
- * Nearest indices move most: shift ∝ step/|Δi| so gap 1 dominates, farther interiors move less.
- */
-const PEER_SEP_FR = 0.88;
 
 function dataIndex(el: HTMLElement): number {
   const v = el.getAttribute('data-index');
@@ -56,7 +46,11 @@ function readShelfStepPx(shelf: HTMLElement): number {
   return 48;
 }
 
-function setPeerShift(hoveredArt: HTMLElement, allArts: Iterable<HTMLElement>): void {
+function setPeerShift(
+  hoveredArt: HTMLElement,
+  allArts: Iterable<HTMLElement>,
+  config: ListeningShelfConfig
+): void {
   const shelf = hoveredArt.closest('.listening-shelf');
   if (!(shelf instanceof HTMLElement)) {
     return;
@@ -79,7 +73,7 @@ function setPeerShift(hoveredArt: HTMLElement, allArts: Iterable<HTMLElement>): 
       continue;
     }
     const gaps = Math.abs(h - i);
-    const shiftPx = Math.round((PEER_SEP_FR * stepPx) / gaps);
+    const shiftPx = Math.round((config.hover.peerSeparation * stepPx) / gaps);
     if (shiftPx < 1) {
       el.style.removeProperty('--peer-shift');
     } else {
@@ -89,7 +83,19 @@ function setPeerShift(hoveredArt: HTMLElement, allArts: Iterable<HTMLElement>): 
   }
 }
 
-function bindDesktopMode(wrap: Element): () => void {
+function setShelfLayoutClass(wrap: Element, layout: 'fan' | 'row' | 'stack'): void {
+  const shelf = wrap.querySelector('.listening-shelf');
+  if (!shelf) return;
+  shelf.classList.toggle('listening-shelf--fan', layout === 'fan');
+  shelf.classList.toggle('listening-shelf--row', layout === 'row');
+  shelf.classList.toggle('listening-shelf--stack', layout === 'stack');
+}
+
+function bindHoverLayout(
+  wrap: Element,
+  config: ListeningShelfConfig,
+  layout: 'fan' | 'row'
+): () => void {
   const ac = new AbortController();
   const { signal } = ac;
 
@@ -110,7 +116,8 @@ function bindDesktopMode(wrap: Element): () => void {
   let hovered: HTMLElement | null = null;
 
   installPreviewUnlockOnce();
-  const preview = createPreviewController();
+  const preview = createPreviewController(config.audio.volume);
+  const usesPeerShift = layout === 'fan';
 
   const placeLabel = (art: HTMLElement) => {
     if (!art || now.hasAttribute('hidden')) return;
@@ -122,7 +129,7 @@ function bindDesktopMode(wrap: Element): () => void {
     const cx = artRect.left - lineRect.left + artRect.width * 0.5;
     const t = cx / w;
     const minCenterW = 120;
-    const maxCenterW = Math.min(352, w - 2 * GUTTER);
+    const maxCenterW = Math.max(minCenterW, w - 2 * GUTTER);
 
     now.style.setProperty('position', 'absolute');
     now.style.setProperty('top', '0');
@@ -136,7 +143,10 @@ function bindDesktopMode(wrap: Element): () => void {
       const left = Math.max(0, artRect.left - lineRect.left);
       now.style.setProperty('left', `${left}px`);
       now.style.setProperty('transform', 'none');
-      now.style.setProperty('max-width', `${Math.max(minCenterW, w - left - GUTTER)}px`);
+      now.style.setProperty(
+        'max-width',
+        `min(${config.visual.labelMaxWidth}, ${Math.max(minCenterW, w - left - GUTTER)}px)`
+      );
       now.style.setProperty('text-align', 'left');
     } else if (t > 1 - EDGE) {
       const r = Math.max(0, lineRect.right - artRect.right);
@@ -144,12 +154,18 @@ function bindDesktopMode(wrap: Element): () => void {
       now.style.setProperty('left', 'auto');
       now.style.setProperty('transform', 'none');
       const spaceLeft = artRect.right - lineRect.left - GUTTER;
-      now.style.setProperty('max-width', `${Math.max(minCenterW, spaceLeft)}px`);
+      now.style.setProperty(
+        'max-width',
+        `min(${config.visual.labelMaxWidth}, ${Math.max(minCenterW, spaceLeft)}px)`
+      );
       now.style.setProperty('text-align', 'right');
     } else {
       now.style.setProperty('left', `${cx}px`);
       now.style.setProperty('transform', 'translateX(-50%)');
-      now.style.setProperty('max-width', `${maxCenterW}px`);
+      now.style.setProperty(
+        'max-width',
+        `min(${config.visual.labelMaxWidth}, ${maxCenterW}px)`
+      );
       now.style.setProperty('text-align', 'center');
     }
   };
@@ -185,7 +201,7 @@ function bindDesktopMode(wrap: Element): () => void {
       labelSettleTimer = window.setTimeout(() => {
         labelSettleTimer = null;
         showLabel();
-      }, PEEK_SETTLE_MS);
+      }, config.hover.settleMs);
     }
   };
 
@@ -218,20 +234,22 @@ function bindDesktopMode(wrap: Element): () => void {
           peekTimer = null;
           for (const a of arts) a.classList.remove(PEEK_CLASS);
           art.classList.add(PEEK_CLASS);
-          setPeerShift(art, arts);
+          if (usesPeerShift) {
+            setPeerShift(art, arts, config);
+          }
           setNow(art);
           requestAnimationFrame(() => {
             if (hovered === art && art.classList.contains(PEEK_CLASS)) {
               placeLabel(art);
             }
           });
-        }, PEEK_DELAY_MS);
+        }, config.hover.peekDelayMs);
         audioTimer = window.setTimeout(() => {
           audioTimer = null;
           if (art.matches(':hover')) {
             preview.start(art);
           }
-        }, AUDIO_DELAY_MS);
+        }, config.audio.delayMs);
       },
       { signal }
     );
@@ -260,7 +278,9 @@ function bindDesktopMode(wrap: Element): () => void {
   );
   const onWinResize = () => {
     if (hovered && hovered.classList.contains(PEEK_CLASS)) {
-      setPeerShift(hovered, arts);
+      if (usesPeerShift) {
+        setPeerShift(hovered, arts, config);
+      }
       placeLabel(hovered);
     }
   };
@@ -277,19 +297,40 @@ function bindDesktopMode(wrap: Element): () => void {
   };
 }
 
-export function bindListeningShelf(wrap: Element): () => void {
-  const mq = window.matchMedia(DESKTOP_MQ);
+function breakpointQuery(breakpoint: string): string {
+  const value = breakpoint.trim();
+  return value.startsWith('(') ? value : `(min-width: ${value})`;
+}
+
+function bindResolvedLayout(
+  wrap: Element,
+  config: ListeningShelfConfig,
+  layout: 'fan' | 'row' | 'stack'
+): () => void {
+  setShelfLayoutClass(wrap, layout);
+  if (layout === 'stack') {
+    placeTrackLineForViewport(wrap, true);
+    return bindMobileStack(wrap, config);
+  }
+  placeTrackLineForViewport(wrap, false);
+  return bindHoverLayout(wrap, config, layout);
+}
+
+export function bindListeningShelf(wrap: Element, config: ListeningShelfConfig): () => void {
+  if (config.layout !== 'auto') {
+    return bindResolvedLayout(wrap, config, config.layout);
+  }
+
+  const mq = window.matchMedia(breakpointQuery(config.breakpoint));
   let destroy: (() => void) | undefined;
 
   const run = () => {
     destroy?.();
     destroy = undefined;
     if (mq.matches) {
-      placeTrackLineForViewport(wrap, false);
-      destroy = bindDesktopMode(wrap);
+      destroy = bindResolvedLayout(wrap, config, 'fan');
     } else {
-      placeTrackLineForViewport(wrap, true);
-      destroy = bindMobileStack(wrap);
+      destroy = bindResolvedLayout(wrap, config, 'stack');
     }
   };
 

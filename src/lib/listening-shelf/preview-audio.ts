@@ -18,15 +18,13 @@ export function installPreviewUnlockOnce(): void {
   );
 }
 
-const PREVIEW_VOLUME = 0.4;
-
-export function createPreviewController(): {
+export function createPreviewController(volume = 0.4): {
   start: (el: Element) => void;
   stop: () => void;
 } {
   const audio = new Audio();
   audio.preload = 'auto';
-  audio.volume = PREVIEW_VOLUME;
+  audio.volume = Math.max(0, Math.min(1, volume));
   let lastPreviewUrl = '';
   return {
     start: (el: Element) => {
